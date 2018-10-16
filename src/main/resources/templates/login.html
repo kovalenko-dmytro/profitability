@@ -9,19 +9,29 @@
 <body>
 
     <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <a class="btn btn-block btn-info mr-auto" th:href="@{'/registration'}" role="button">Go To Registration Page</a>
+            </div>
+        </div>
         <div class="row justify-content-sm-center">
             <div class="col-sm-8">
-                <a class="btn btn-block btn-info mr-auto" th:href="@{'/logout'}" role="button">Logout</a>
-                <div class="card text-justify mt-5">
-                    <div class="card-header text-white bg-success text-center">
-                        Action List
+                <form th:action="@{/login}" method="POST" class="form-signin">
+                    <h3 class="form-signin-heading" th:text="Welcome"></h3>
+                    <br/>
+
+                    <input type="text" id="email" name="email" th:placeholder="Email"
+                           class="form-control"/> <br/>
+                    <input type="password" th:placeholder="Password"
+                           id="password" name="password" class="form-control"/> <br/>
+
+                    <div align="center" th:if="${param.error}">
+                        <p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
                     </div>
-                    <div class="card-body ">
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/students'}" role="button">Students</a>
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/subjects'}" role="button">Subjects</a>
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/exams'}" role="button">Exams</a>
-                    </div>
-                </div>
+                    <button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit"
+                            th:text="Login"></button>
+                </form>
+
             </div>
         </div>
     </div>

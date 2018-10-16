@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -11,15 +11,12 @@
     <div class="container">
         <div class="row justify-content-sm-center">
             <div class="col-sm-8">
-                <a class="btn btn-block btn-info mr-auto" th:href="@{'/logout'}" role="button">Logout</a>
                 <div class="card text-justify mt-5">
                     <div class="card-header text-white bg-success text-center">
-                        Action List
+                        Error!
                     </div>
                     <div class="card-body ">
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/students'}" role="button">Students</a>
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/subjects'}" role="button">Subjects</a>
-                        <a class="btn btn-block btn-info mr-auto" th:href="@{'/exams'}" role="button">Exams</a>
+                        <p>Access Denied</p>
                     </div>
                 </div>
             </div>
