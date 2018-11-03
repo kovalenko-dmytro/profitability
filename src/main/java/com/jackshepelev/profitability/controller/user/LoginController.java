@@ -37,7 +37,7 @@ public class LoginController {
     }
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public ModelAndView logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
 
         ModelAndView modelAndView = new ModelAndView();
 
@@ -63,7 +63,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+    public ModelAndView registration(@Valid User user, BindingResult bindingResult) {
 
         ModelAndView modelAndView = new ModelAndView();
 
@@ -82,18 +82,6 @@ public class LoginController {
             modelAndView.setViewName("redirect:/index");
 
         }
-        return modelAndView;
-    }
-
-    @RequestMapping(value="/admin", method = RequestMethod.GET)
-    public ModelAndView adminHome(){
-        ModelAndView modelAndView = new ModelAndView();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByEmail(auth.getName());
-        modelAndView.addObject("userName", "Welcome " + user.getFirstName() + " " + user.getLastName() + " (" + user.getEmail() + ")");
-        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-        modelAndView.setViewName("admin-index");
-
         return modelAndView;
     }
 }
