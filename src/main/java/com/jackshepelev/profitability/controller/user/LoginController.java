@@ -31,7 +31,7 @@ public class LoginController {
 
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("login");
+        modelAndView.setViewName("/pages/login");
 
         return modelAndView;
     }
@@ -57,7 +57,7 @@ public class LoginController {
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.addObject("user", new User());
-        modelAndView.setViewName("register");
+        modelAndView.setViewName("/pages/registration");
 
         return modelAndView;
     }
@@ -76,7 +76,7 @@ public class LoginController {
         }
 
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("register");
+            modelAndView.setViewName("/pages/registration");
         } else {
             userService.save(user);
             modelAndView.setViewName("redirect:/index");

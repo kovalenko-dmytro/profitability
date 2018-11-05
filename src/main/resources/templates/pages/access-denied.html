@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{fragments/layout}">
+
+<head>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Admin</title>
+</head>
+
+<body>
+<!-- Page Content -->
+<div layout:fragment="content" th:remove="tag">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h3>You are not authorized to access user profile.</h3>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
