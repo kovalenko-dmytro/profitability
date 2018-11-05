@@ -34,7 +34,9 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
                 ));
     }
 
-    public abstract E save(E entity);
+    public E save(E entity) {
+        return  repository.save(entity);
+    }
 
     @Override
     public abstract E update(E entity, Locale locale) throws ProfitabilityException;
