@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.configuration;
 
-import com.jackshepelev.profitability.constants.Constants;
+import com.jackshepelev.profitability.constants.AppConstants;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ public class MessageConfiguration extends WebMvcConfigurerAdapter {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages/messages");
-        messageSource.setDefaultEncoding(Constants.DEFAULT_ENCODING.name());
+        messageSource.setDefaultEncoding(AppConstants.DEFAULT_ENCODING.getCharset().name());
         messageSource.setCacheSeconds(60);
         return messageSource;
     }
@@ -33,7 +33,7 @@ public class MessageConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(Constants.DEFAULT_LOCALE);
+        localeResolver.setDefaultLocale(AppConstants.DEFAULT_LOCALE.getLocale());
         return localeResolver;
     }
 
