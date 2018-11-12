@@ -24,7 +24,8 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
 
     public Project save(User user, Project entity) {
         entity.setDate(LocalDateTime.now());
-        repository.save(user.getId(), entity.getTitle(), entity.getDate());
+        entity.setUser(user);
+        repository.save(entity);
         return repository.findByTitle(entity.getTitle());
     }
 

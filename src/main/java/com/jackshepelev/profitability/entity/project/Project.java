@@ -1,6 +1,7 @@
 package com.jackshepelev.profitability.entity.project;
 
 import com.jackshepelev.profitability.entity.AbstractEntity;
+import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Component("project")
@@ -33,4 +35,7 @@ public class Project extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnergyEfficiencyMeasure> eems;
 }
