@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Component("project")
 @Table(name = "projects")
 @NoArgsConstructor
 @AllArgsConstructor

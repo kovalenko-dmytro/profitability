@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Component("user")
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor

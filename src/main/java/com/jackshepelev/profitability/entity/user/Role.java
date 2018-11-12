@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Component("role")
 @Table(name = "roles")
 @NoArgsConstructor
 @AllArgsConstructor

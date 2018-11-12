@@ -13,7 +13,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Component("energyEfficiencyMeasure")
 @Table(name = "eems")
 @NoArgsConstructor
 @AllArgsConstructor
