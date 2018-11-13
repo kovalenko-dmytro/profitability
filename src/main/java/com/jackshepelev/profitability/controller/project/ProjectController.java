@@ -1,8 +1,11 @@
 package com.jackshepelev.profitability.controller.project;
 
-import com.jackshepelev.profitability.entity.project.Project;
+import com.jackshepelev.profitability.binding.ProjectInputData;
+import com.jackshepelev.profitability.entity.project.EnergyTariff;
+import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
+import com.jackshepelev.profitability.service.project.EnergyTypeService;
 import com.jackshepelev.profitability.service.project.ProjectService;
 import com.jackshepelev.profitability.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +19,23 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final EnergyTypeService energyTypeService;
     private final UserService userService;
 
     @Autowired
-    public ProjectController(ProjectService projectService, UserService userService) {
+    public ProjectController(ProjectService projectService,
+                             EnergyTypeService energyTypeService,
+                             UserService userService) {
+
         this.projectService = projectService;
+        this.energyTypeService = energyTypeService;
         this.userService = userService;
     }
 
@@ -45,20 +55,25 @@ public class ProjectController {
 
         ModelAndView view = new ModelAndView();
 
-        view.addObject("project", new Project());
+        List<EnergyType> energyTypes = energyTypeService.findAll();
+        ProjectInputData data = new ProjectInputData();
+        List<EnergyTariff> tariffs = energyTypes.stream().map(EnergyTariff::new).collect(Collectors.toList());
+        data.setTariffs(tariffs);
+
+        view.addObject("data", data);
         view.setViewName("/pages/project/project-create");
 
         return view;
     }
 
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
-    public ModelAndView create(@Valid @ModelAttribute Project project) {
+    public ModelAndView create(@Valid @ModelAttribute ProjectInputData data) {
 
         ModelAndView view = new ModelAndView();
 
         User user = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        projectService.save(user, project);
+        projectService.save(user, data);
 
         view.setViewName("redirect:/projects");
 

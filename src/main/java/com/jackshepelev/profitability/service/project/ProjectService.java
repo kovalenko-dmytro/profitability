@@ -1,5 +1,8 @@
 package com.jackshepelev.profitability.service.project;
 
+import com.jackshepelev.profitability.binding.ProjectInputData;
+import com.jackshepelev.profitability.entity.project.DiscountRate;
+import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
@@ -10,7 +13,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -22,11 +28,24 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
         super(repository, messageSource);
     }
 
-    public Project save(User user, Project entity) {
-        entity.setDate(LocalDateTime.now());
-        entity.setUser(user);
-        repository.save(entity);
-        return repository.findByTitle(entity.getTitle());
+    public Project save(User user, ProjectInputData data) {
+
+        Project project = new Project();
+        project.setTitle(data.getTitle());
+        project.setDate(LocalDateTime.now());
+        project.setUser(user);
+        project.setEconomicLifeTime(data.getEconomicLifeTime());
+
+        BigDecimal realDiscountRate = (data.getNominalDiscountRate().subtract(data.getInflationRate()))
+                .divide(data.getInflationRate().add(BigDecimal.valueOf(1)), 3, RoundingMode.CEILING);
+
+        project.setDiscountRate(new DiscountRate(data.getNominalDiscountRate(), data.getInflationRate(), realDiscountRate));
+
+        List<EnergyTariff> tariffs = data.getTariffs();
+        tariffs.forEach(tariff -> tariff.setProject(project));
+        project.setTariffs(tariffs);
+
+        return repository.save(project);
     }
 
     @Override
