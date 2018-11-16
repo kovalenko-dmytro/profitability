@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +23,12 @@ public class EnergyEfficiencyMeasure extends AbstractEntity {
     @NotNull
     @NotEmpty(message = "message = *Please provide name of EEM")
     private String name;
+
+    @Embedded
+    private InputEEMData inputEEMData;
+
+    @Embedded
+    private ResultEEMData resultEEMData;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
