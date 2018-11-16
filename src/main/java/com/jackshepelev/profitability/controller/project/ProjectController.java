@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,12 @@ public class ProjectController {
 
         List<EnergyType> energyTypes = energyTypeService.findAll();
         ProjectInputData data = new ProjectInputData();
-        List<EnergyTariff> tariffs = energyTypes.stream().map(EnergyTariff::new).collect(Collectors.toList());
+
+        List<EnergyTariff> tariffs = energyTypes
+                .stream()
+                .map(EnergyTariff::new)
+                .collect(Collectors.toCollection(LinkedList::new));
+
         data.setTariffs(tariffs);
 
         view.addObject("data", data);

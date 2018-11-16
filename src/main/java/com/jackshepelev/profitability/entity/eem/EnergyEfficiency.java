@@ -34,4 +34,8 @@ public class EnergyEfficiency extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "eem_id")
     private EnergyEfficiencyMeasure eem;
+
+    public EnergyEfficiency(EnergyType energyType) {
+        this.energyType = energyType;
+    }
 }

@@ -4,14 +4,14 @@ import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class EemInputData {
 
-    private String eemName;
+    private String name;
     private BigDecimal initialInvestment;
-    private Set<EnergyEfficiency> energyEfficiencySet;
+    private List<EnergyEfficiency> energyEfficiencies;
     private BigDecimal annualOMCosts;
     private int economicLifeTime;
     private int projectPackage;

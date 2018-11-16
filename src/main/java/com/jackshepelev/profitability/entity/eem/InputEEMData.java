@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 @Embeddable
 @NoArgsConstructor
@@ -25,7 +25,7 @@ public class InputEEMData {
     private BigDecimal initialInvestment;
 
     @OneToMany(mappedBy = "eem", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    Set<EnergyEfficiency> energyEfficiencySet;
+    List<EnergyEfficiency> energyEfficiencies;
 
     @Column(name = "annual_om_costs", precision=12, scale=3)
     @NotNull
