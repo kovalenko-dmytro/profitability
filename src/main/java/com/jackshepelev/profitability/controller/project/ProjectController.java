@@ -94,4 +94,15 @@ public class ProjectController {
 
         return view;
     }
+
+    @RequestMapping(value="/projects/{id}", method = RequestMethod.DELETE)
+    public ModelAndView delete(@PathVariable(value = "id") long id) {
+
+        ModelAndView view = new ModelAndView();
+
+        projectService.deleteById(id);
+        view.setViewName("redirect:/projects");
+
+        return view;
+    }
 }

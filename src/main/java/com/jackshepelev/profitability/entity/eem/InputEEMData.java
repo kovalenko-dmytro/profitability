@@ -24,7 +24,7 @@ public class InputEEMData {
     @DecimalMin("0.001")
     private BigDecimal initialInvestment;
 
-    @OneToMany(mappedBy = "eem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "eem", cascade = CascadeType.REMOVE, orphanRemoval = true)
     Set<EnergyEfficiency> energyEfficiencySet;
 
     @Column(name = "annual_om_costs", precision=12, scale=3)
@@ -32,6 +32,11 @@ public class InputEEMData {
     @DecimalMax("999999999.999")
     @DecimalMin("0.001")
     private BigDecimal annualOMCosts;
+
+    @Column(name = "life_time")
+    @NotNull
+    @Min(value = 1)
+    private int economicLifeTime;
 
     @Column(name = "package")
     @Min(value = 1)

@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -31,13 +30,8 @@ public class Project extends AbstractEntity {
     @Embedded
     private DiscountRate discountRate;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<EnergyTariff> tariffs;
-
-    @Column(name = "life_time")
-    @NotNull
-    @Min(value = 1)
-    private int economicLifeTime;
 
     @Column(name = "created")
     private LocalDateTime date;
@@ -46,7 +40,7 @@ public class Project extends AbstractEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<EnergyEfficiencyMeasure> eems;
 
 }

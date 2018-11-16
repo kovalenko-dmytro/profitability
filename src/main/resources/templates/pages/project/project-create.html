@@ -65,16 +65,6 @@
                                 </div>
                             </fieldset>
                             <fieldset class="scheduler-border">
-                                <legend class="scheduler-border">Economic life time</legend>
-                                <div class="form-group">
-                                    <label for="economicLifeTime">Economic life time:</label>
-                                    <input type="number" class="form-control" id="economicLifeTime" name="economicLifeTime" th:field="*{economicLifeTime}" />
-                                    <p th:each="error: ${#fields.errors('economicLifeTime')}"
-                                       th:text="${error}">Validation error
-                                    </p>
-                                </div>
-                            </fieldset>
-                            <fieldset class="scheduler-border">
                                 <legend class="scheduler-border">Energy tariffs</legend>
                                 <div th:each="tariff,status : ${data.tariffs}" >
                                     <div class="form-group">

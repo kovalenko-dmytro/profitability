@@ -17,6 +17,18 @@ import java.math.BigDecimal;
 @Data
 public class ResultEEMData {
 
+    @Column(name = "init_savings", precision=15, scale=3)
+    @NotNull
+    @DecimalMax("999999999999.999")
+    @DecimalMin("0.001")
+    private BigDecimal initialSavings;
+
+    @Column(name = "net_savings", precision=15, scale=3)
+    @NotNull
+    @DecimalMax("999999999999.999")
+    @DecimalMin("0.001")
+    private BigDecimal netSavings;
+
     @Column(name = "pay_back", precision=15, scale=3)
     @NotNull
     @DecimalMax("999999999999.999")

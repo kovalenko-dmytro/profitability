@@ -34,7 +34,6 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
         project.setTitle(data.getTitle());
         project.setDate(LocalDateTime.now());
         project.setUser(user);
-        project.setEconomicLifeTime(data.getEconomicLifeTime());
 
         BigDecimal realDiscountRate = (data.getNominalDiscountRate().subtract(data.getInflationRate()))
                 .divide(data.getInflationRate().add(BigDecimal.valueOf(1)), 3, RoundingMode.CEILING);
