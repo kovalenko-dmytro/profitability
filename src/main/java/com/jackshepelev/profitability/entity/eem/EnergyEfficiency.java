@@ -28,7 +28,7 @@ public class EnergyEfficiency extends AbstractEntity {
     @Column(name = "value", precision=15, scale=3)
     @NotNull
     @DecimalMax("999999999999.999")
-    @DecimalMin("0.001")
+    @DecimalMin("0.000")
     private BigDecimal value;
 
     @ManyToOne
