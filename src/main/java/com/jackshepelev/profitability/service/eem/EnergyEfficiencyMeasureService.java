@@ -4,6 +4,8 @@ import com.jackshepelev.profitability.binding.EemInputData;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.eem.InputEEMData;
+import com.jackshepelev.profitability.entity.eem.ResultEEMData;
+import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
 import com.jackshepelev.profitability.repository.eem.EnergyEfficiencyMeasureRepository;
@@ -15,6 +17,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -67,10 +71,41 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
         energyEfficiencies.forEach(energyEfficiency -> energyEfficiency.setEem(measure));
         measure.getInputEEMData().setEnergyEfficiencies(energyEfficiencies);
 
+        measure.setResultEEMData(new ResultEEMData());
+
+        measure.getResultEEMData().setInitialSavings(
+                calculateInitialSavings(measure.getInputEEMData().getEnergyEfficiencies(), project.getTariffs())
+        );
+        measure.getResultEEMData().setNetSavings(
+                measure.getResultEEMData().getInitialSavings().subtract(measure.getInputEEMData().getAnnualOMCosts())
+        );
+        measure.getResultEEMData().setPayBack(
+                calculatePayBack(measure.getInputEEMData().getInitialInvestment(), measure.getResultEEMData().getNetSavings())
+        );
+
+
+
         measure.setProject(project);
 
 
         return repository.save(measure);
+    }
+
+    private BigDecimal calculatePayBack(BigDecimal initialInvestment, BigDecimal netSavings) {
+        return initialInvestment.divide(netSavings,3, RoundingMode.CEILING);
+    }
+
+    private BigDecimal calculateInitialSavings(List<EnergyEfficiency> energyEfficiencies, List<EnergyTariff> energyTariffs) {
+        BigDecimal result = BigDecimal.valueOf(0);
+        for (EnergyEfficiency efficiency : energyEfficiencies){
+            EnergyTariff tariff = energyTariffs
+                    .stream()
+                    .filter(t -> t.getEnergyType().getId() == efficiency.getEnergyType().getId())
+                    .findFirst()
+                    .get();
+            result = result.add(efficiency.getValue().multiply(tariff.getValue()));
+        }
+        return result;
     }
 
     public EnergyEfficiencyMeasure update(long eemID, EemInputData data, Locale locale) throws ProfitabilityException {
