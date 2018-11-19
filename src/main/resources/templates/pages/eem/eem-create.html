@@ -38,11 +38,11 @@
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <form role="form" method="POST" th:action="@{'/projects/' + ${project.id} + '/eems'}" th:object="${data}">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
                                     <label for="name">EEM name</label>
-                                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}" />
+                                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required/>
                                     <p th:each="error: ${#fields.errors('name')}"
                                        th:text="${error}">Validation error
                                     </p>
@@ -51,7 +51,7 @@
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
                                     <label for="initialInvestment">Initial investment, USD</label>
-                                    <input type="text" class="form-control" id="initialInvestment" name="initialInvestment" th:field="*{initialInvestment}" placeholder="0.000"/>
+                                    <input type="text" class="form-control" id="initialInvestment" name="initialInvestment" th:field="*{initialInvestment}" required placeholder="0.000"/>
                                     <p th:each="error: ${#fields.errors('initialInvestment')}"
                                        th:text="${error}">Validation error
                                     </p>
@@ -62,7 +62,7 @@
                                 <div th:each="ee,status : ${data.energyEfficiencies}" >
                                     <div class="form-group">
                                         <label th:text="${ee.energyType.name} + ', kWth'"></label>
-                                        <input type="text" class="form-control" th:field="*{energyEfficiencies[__${status.index}__].value}"  th:value="${ee.value}" placeholder="0.000"/>
+                                        <input type="text" class="form-control" th:field="*{energyEfficiencies[__${status.index}__].value}"  th:value="${ee.value}" required placeholder="0.000"/>
                                     </div>
                                     <input class="invisible " th:field="*{energyEfficiencies[__${status.index}__].energyType.id}" th:value="${ee.energyType.id}" />
                                     <input class="invisible " th:field="*{energyEfficiencies[__${status.index}__].energyType.name}" th:value="${ee.energyType.name}" placeholder="0.000"/>
@@ -73,7 +73,7 @@
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
                                     <label for="annualOMCosts">Annual Operation & Maintain Costs, USD</label>
-                                    <input type="text" class="form-control" id="annualOMCosts" name="annualOMCosts" th:field="*{annualOMCosts}" placeholder="0.000"/>
+                                    <input type="text" class="form-control" id="annualOMCosts" name="annualOMCosts" th:field="*{annualOMCosts}" required placeholder="0.000"/>
                                     <p th:each="error: ${#fields.errors('annualOMCosts')}"
                                        th:text="${error}">Validation error
                                     </p>
@@ -82,7 +82,7 @@
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
                                     <label for="economicLifeTime">Economic Lifetime, years</label>
-                                    <input type="text" class="form-control" id="economicLifeTime" name="economicLifeTime" th:field="*{economicLifeTime}" />
+                                    <input type="number" class="form-control" id="economicLifeTime" name="economicLifeTime" th:field="*{economicLifeTime}" required placeholder="0"/>
                                     <p th:each="error: ${#fields.errors('economicLifeTime')}"
                                        th:text="${error}">Validation error
                                     </p>
