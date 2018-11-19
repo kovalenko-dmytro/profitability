@@ -68,13 +68,17 @@ public class EnergyEfficiencyMeasureController {
 
     @RequestMapping(value = "/projects/{projectID}/eems", method = RequestMethod.POST)
     public ModelAndView create(@PathVariable(value = "projectID") long projectID,
-                               @Valid @ModelAttribute EemInputData data) {
+                               @Valid @ModelAttribute EemInputData data,
+                               HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
 
-        System.out.println(data);
-
-        view.setViewName("redirect:/projects/" + projectID + "");
+        try {
+            energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
+            view.setViewName("redirect:/projects/" + projectID + "");
+        } catch (ProfitabilityException e) {
+            view.addObject("error", e.getMessage());
+        }
 
         return view;
     }
