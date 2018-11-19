@@ -59,20 +59,17 @@
                                 </thead>
                                 <tbody>
                                 <tr th:if="${project.eems != null}" th:each="eem: ${project.eems}">
-                                    <td th:text="${eem.name}"></td>
-                                    <td th:text="${eem.InputEEMData?.initialInvestment}"></td>
-                                    <td th:text="${eem.ResultEEMData?.netSavings}"></td>
-                                    <td th:text="${eem.InputEEMData?.economicLifeTime}"></td>
-                                    <td th:text="${eem.ResultEEMData?.payBack}"></td>
-                                    <td th:text="${eem.ResultEEMData?.payOff}"></td>
-                                    <td th:text="${eem.ResultEEMData?.internalRateOfReturn}"></td>
-                                    <td th:text="${eem.ResultEEMData?.netPresentValue}"></td>
-                                    <td th:text="${eem.ResultEEMData?.netPresentValueQuotient}"></td>
+                                    <td class="text-right" th:text="${eem.name}"></td>
+                                    <td class="text-right" th:text="${eem.InputEEMData?.initialInvestment}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.netSavings}"></td>
+                                    <td class="text-right" th:text="${eem.InputEEMData?.economicLifeTime}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.payBack}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.payOff}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.internalRateOfReturn}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.netPresentValue}"></td>
+                                    <td class="text-right" th:text="${eem.ResultEEMData?.netPresentValueQuotient}"></td>
                                     <td>
-                                        <form method="post" th:action="@{'/projects/' + ${project.id} + '/eems/' + ${eem.id}}">
-                                            <input type="hidden" name="_method" value="put">
-                                            <input class="btn btn-sm btn-warning btn-block" type="submit" value="Edit">
-                                        </form>
+                                        <a class="btn btn-sm btn-warning btn-block"  th:href="@{'/projects/' + ${project.id} + '/eems/' + ${eem.id} + '/update'}">Edit</a>
                                     </td>
                                     <td>
                                         <form method="post" th:action="@{'/projects/' + ${project.id} + '/eems/' + ${eem.id}}">

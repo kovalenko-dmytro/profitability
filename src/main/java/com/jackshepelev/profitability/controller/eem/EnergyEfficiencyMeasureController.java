@@ -2,6 +2,7 @@ package com.jackshepelev.profitability.controller.eem;
 
 import com.jackshepelev.profitability.binding.EemInputData;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
+import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
@@ -79,6 +80,65 @@ public class EnergyEfficiencyMeasureController {
         } catch (ProfitabilityException e) {
             view.addObject("error", e.getMessage());
         }
+
+        return view;
+    }
+
+    @RequestMapping(value="/projects/{projectID}/eems/{eemID}/update", method = RequestMethod.GET)
+    public ModelAndView update(@PathVariable(value = "projectID") long projectID,
+                               @PathVariable(value = "eemID") long eemID,
+                               HttpServletRequest request) {
+
+        ModelAndView view = new ModelAndView();
+        try {
+            Project project = projectService.findById(projectID, request.getLocale());
+            view.addObject("project", project);
+
+            EnergyEfficiencyMeasure measure = energyEfficiencyMeasureService.findById(eemID, request.getLocale());
+            view.addObject("eemID", measure.getId());
+            EemInputData data = new EemInputData();
+            data.setEnergyEfficiencies(measure.getInputEEMData().getEnergyEfficiencies());
+            data.setAnnualOMCosts(measure.getInputEEMData().getAnnualOMCosts());
+            data.setEconomicLifeTime(measure.getInputEEMData().getEconomicLifeTime());
+            data.setInitialInvestment(measure.getInputEEMData().getInitialInvestment());
+            data.setName(measure.getName());
+
+            view.addObject("data", data);
+        } catch (ProfitabilityException e) {
+            view.addObject("error", e.getMessage());
+        }
+
+        view.setViewName("/pages/eem/eem-update");
+
+        return view;
+    }
+
+    @RequestMapping(value="/projects/{projectID}/eems/{eemID}", method = RequestMethod.PUT)
+    public ModelAndView update(@PathVariable(value = "projectID") long projectID,
+                               @PathVariable(value = "eemID") long eemID,
+                               @ModelAttribute EemInputData data,
+                               HttpServletRequest request) {
+
+        ModelAndView view = new ModelAndView();
+
+        try {
+            energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
+            view.setViewName("redirect:/projects/" + projectID + "");
+        } catch (ProfitabilityException e) {
+            view.addObject("error", e.getMessage());
+        }
+
+        return view;
+    }
+
+    @RequestMapping(value = "/projects/{projectID}/eems/{eemID}", method = RequestMethod.DELETE)
+    public ModelAndView delete(@PathVariable(value = "projectID") long projectID,
+                               @PathVariable(value = "eemID") long eemID) {
+
+        ModelAndView view = new ModelAndView();
+
+        energyEfficiencyMeasureService.deleteById(eemID);
+        view.setViewName("redirect:/projects/" + projectID + "");
 
         return view;
     }

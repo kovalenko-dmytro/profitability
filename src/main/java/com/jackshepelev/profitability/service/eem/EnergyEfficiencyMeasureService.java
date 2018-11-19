@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -70,5 +71,37 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
 
 
         return repository.save(measure);
+    }
+
+    public EnergyEfficiencyMeasure update(long eemID, EemInputData data, Locale locale) throws ProfitabilityException {
+
+        Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
+
+        if (optionalMeasure.isPresent()){
+            EnergyEfficiencyMeasure measure = optionalMeasure.get();
+            measure.setName(data.getName());
+            measure.getInputEEMData().setAnnualOMCosts(data.getAnnualOMCosts());
+            measure.getInputEEMData().setEconomicLifeTime(data.getEconomicLifeTime());
+            measure.getInputEEMData().setInitialInvestment(data.getInitialInvestment());
+
+            measure.getInputEEMData().getEnergyEfficiencies()
+                    .forEach(
+                            energyEfficiency -> energyEfficiency
+                                    .setValue(
+                                            data.getEnergyEfficiencies()
+                                                    .stream()
+                                                    .filter(ee -> ee.getEnergyType().equals(energyEfficiency.getEnergyType()))
+                                                    .findFirst()
+                                                    .get()
+                                                    .getValue()
+                                    )
+                    );
+
+            return repository.save(measure);
+        } else {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.project-not-exist", null, locale)
+            );
+        }
     }
 }

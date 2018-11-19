@@ -37,7 +37,8 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <form role="form" method="POST" th:action="@{'/projects/' + ${project.id} + '/eems'}" th:object="${data}">
+                        <form role="form" method="POST" th:action="@{'/projects/' + ${project.id} + '/eems/' + ${eemID}}" th:object="${data}">
+                            <input type="hidden" name="_method" value="PUT">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
@@ -88,7 +89,7 @@
                                     </p>
                                 </div>
                             </fieldset>
-                            <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
+                            <button class="btn btn-lg btn-warning btn-block" type="submit">Edit</button>
                         </form>
                     </div>
                     <!-- /.panel-body -->
