@@ -8,7 +8,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -37,9 +40,4 @@ public class InputEEMData {
     @NotNull
     @Min(value = 1)
     private int economicLifeTime;
-
-    @Column(name = "package")
-    @Min(value = 1)
-    @Max(value = 5)
-    private int projectPackage;
 }

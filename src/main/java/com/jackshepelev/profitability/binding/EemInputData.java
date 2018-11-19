@@ -14,5 +14,4 @@ public class EemInputData {
     private List<EnergyEfficiency> energyEfficiencies;
     private BigDecimal annualOMCosts;
     private int economicLifeTime;
-    private int projectPackage;
 }

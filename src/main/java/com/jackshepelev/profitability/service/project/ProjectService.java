@@ -6,6 +6,7 @@ import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
+import com.jackshepelev.profitability.repository.project.EnergyTariffRepository;
 import com.jackshepelev.profitability.repository.project.ProjectRepository;
 import com.jackshepelev.profitability.service.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,16 @@ import java.util.Locale;
 @Transactional
 public class ProjectService extends AbstractService<Project, ProjectRepository> {
 
+    private final EnergyTariffRepository energyTariffRepository;
+
     @Autowired
-    public ProjectService(ProjectRepository repository, MessageSource messageSource) {
+    public ProjectService(ProjectRepository repository,
+                          MessageSource messageSource,
+                          EnergyTariffRepository energyTariffRepository) {
+
         super(repository, messageSource);
+
+        this.energyTariffRepository = energyTariffRepository;
     }
 
     public Project save(User user, ProjectInputData data) {
@@ -41,6 +49,7 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
         project.setDiscountRate(new DiscountRate(data.getNominalDiscountRate(), data.getInflationRate(), realDiscountRate));
 
         List<EnergyTariff> tariffs = data.getTariffs();
+        energyTariffRepository.saveAll(tariffs);
         tariffs.forEach(tariff -> tariff.setProject(project));
         project.setTariffs(tariffs);
 
