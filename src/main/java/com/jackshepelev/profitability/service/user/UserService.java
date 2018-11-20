@@ -18,14 +18,16 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Service
-public class UserService extends AbstractService<User, UserRepository> {
+public class UserService
+        extends AbstractService<User, UserRepository> {
 
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
     public UserService(UserRepository repository,
-                       MessageSource messageSource, RoleRepository roleRepository,
+                       MessageSource messageSource,
+                       RoleRepository roleRepository,
                        BCryptPasswordEncoder encoder) {
 
         super(repository, messageSource);

@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.service.project;
 
-import com.jackshepelev.profitability.binding.ProjectInputData;
+import com.jackshepelev.profitability.binding.BindingProjectInputData;
 import com.jackshepelev.profitability.entity.project.DiscountRate;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
@@ -22,7 +22,8 @@ import java.util.Locale;
 
 @Service
 @Transactional
-public class ProjectService extends AbstractService<Project, ProjectRepository> {
+public class ProjectService
+        extends AbstractService<Project, ProjectRepository> {
 
     private final EnergyTariffRepository energyTariffRepository;
 
@@ -36,7 +37,7 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
         this.energyTariffRepository = energyTariffRepository;
     }
 
-    public Project save(User user, ProjectInputData data) {
+    public Project save(User user, BindingProjectInputData data) {
 
         Project project = new Project();
         project.setTitle(data.getTitle());
@@ -46,7 +47,13 @@ public class ProjectService extends AbstractService<Project, ProjectRepository> 
         BigDecimal realDiscountRate = (data.getNominalDiscountRate().subtract(data.getInflationRate()))
                 .divide(data.getInflationRate().add(BigDecimal.valueOf(1)), 3, RoundingMode.CEILING);
 
-        project.setDiscountRate(new DiscountRate(data.getNominalDiscountRate(), data.getInflationRate(), realDiscountRate));
+        project.setDiscountRate(
+                new DiscountRate(
+                        data.getNominalDiscountRate(),
+                        data.getInflationRate(),
+                        realDiscountRate
+                )
+        );
 
         List<EnergyTariff> tariffs = data.getTariffs();
         energyTariffRepository.saveAll(tariffs);

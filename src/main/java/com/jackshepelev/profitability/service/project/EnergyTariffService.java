@@ -13,7 +13,8 @@ import java.util.Locale;
 
 @Service
 @Transactional
-public class EnergyTariffService extends AbstractService<EnergyTariff, EnergyTariffRepository> {
+public class EnergyTariffService
+        extends AbstractService<EnergyTariff, EnergyTariffRepository> {
 
     @Autowired
     public EnergyTariffService(EnergyTariffRepository repository, MessageSource messageSource) {

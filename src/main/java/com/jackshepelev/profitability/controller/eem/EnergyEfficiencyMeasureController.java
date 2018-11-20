@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.controller.eem;
 
-import com.jackshepelev.profitability.binding.EemInputData;
+import com.jackshepelev.profitability.binding.BindingEEMInputData;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.EnergyType;
@@ -33,7 +33,8 @@ public class EnergyEfficiencyMeasureController {
 
     @Autowired
     public EnergyEfficiencyMeasureController(EnergyEfficiencyMeasureService energyEfficiencyMeasureService,
-                                             ProjectService projectService, EnergyTypeService energyTypeService) {
+                                             ProjectService projectService,
+                                             EnergyTypeService energyTypeService) {
 
         this.energyEfficiencyMeasureService = energyEfficiencyMeasureService;
         this.projectService = projectService;
@@ -49,7 +50,7 @@ public class EnergyEfficiencyMeasureController {
             Project project = projectService.findById(projectID, request.getLocale());
             view.addObject("project", project);
 
-            EemInputData data = new EemInputData();
+            BindingEEMInputData data = new BindingEEMInputData();
             List<EnergyType> energyTypes = energyTypeService.findAll();
 
             List<EnergyEfficiency> energyEfficiencies = energyTypes
@@ -70,7 +71,7 @@ public class EnergyEfficiencyMeasureController {
 
     @RequestMapping(value = "/projects/{projectID}/eems", method = RequestMethod.POST)
     public ModelAndView create(@PathVariable(value = "projectID") long projectID,
-                               @Valid @ModelAttribute EemInputData data,
+                               @Valid @ModelAttribute BindingEEMInputData data,
                                BindingResult result,
                                HttpServletRequest request) {
 
@@ -105,7 +106,7 @@ public class EnergyEfficiencyMeasureController {
 
             EnergyEfficiencyMeasure measure = energyEfficiencyMeasureService.findById(eemID, request.getLocale());
             view.addObject("eemID", measure.getId());
-            EemInputData data = new EemInputData();
+            BindingEEMInputData data = new BindingEEMInputData();
             data.setEnergyEfficiencies(measure.getInputEEMData().getEnergyEfficiencies());
             data.setAnnualOMCosts(measure.getInputEEMData().getAnnualOMCosts());
             data.setEconomicLifeTime(measure.getInputEEMData().getEconomicLifeTime());
@@ -125,7 +126,7 @@ public class EnergyEfficiencyMeasureController {
     @RequestMapping(value="/projects/{projectID}/eems/{eemID}", method = RequestMethod.PUT)
     public ModelAndView update(@PathVariable(value = "projectID") long projectID,
                                @PathVariable(value = "eemID") long eemID,
-                               @ModelAttribute EemInputData data,
+                               @ModelAttribute BindingEEMInputData data,
                                HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();

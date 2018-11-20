@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Locale;
 
 @Service
-public class EnergyTypeService extends AbstractService<EnergyType, EnergyTypeRepository> {
+public class EnergyTypeService
+        extends AbstractService<EnergyType, EnergyTypeRepository> {
 
     @Autowired
     public EnergyTypeService(EnergyTypeRepository repository, MessageSource messageSource) {

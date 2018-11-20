@@ -5,7 +5,7 @@ import com.jackshepelev.profitability.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjectRepository extends CommonRepository<Project> {
+public interface ProjectRepository
+        extends CommonRepository<Project> {
 
-    Project findByTitle(String title);
 }

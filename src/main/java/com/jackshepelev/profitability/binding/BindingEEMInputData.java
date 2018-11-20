@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class EemInputData {
+public class BindingEEMInputData {
 
     @NotNull
     @NotEmpty(message = "message = *Please provide name of measure")

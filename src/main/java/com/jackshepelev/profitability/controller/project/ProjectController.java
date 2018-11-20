@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.controller.project;
 
-import com.jackshepelev.profitability.binding.ProjectInputData;
+import com.jackshepelev.profitability.binding.BindingProjectInputData;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.user.User;
@@ -57,7 +57,7 @@ public class ProjectController {
         ModelAndView view = new ModelAndView();
 
         List<EnergyType> energyTypes = energyTypeService.findAll();
-        ProjectInputData data = new ProjectInputData();
+        BindingProjectInputData data = new BindingProjectInputData();
 
         List<EnergyTariff> tariffs = energyTypes
                 .stream()
@@ -73,7 +73,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
-    public ModelAndView create(@Valid @ModelAttribute ProjectInputData data) {
+    public ModelAndView create(@Valid @ModelAttribute BindingProjectInputData data) {
 
         ModelAndView view = new ModelAndView();
 
@@ -87,7 +87,8 @@ public class ProjectController {
     }
 
     @RequestMapping(value="/projects/{id}", method = RequestMethod.GET)
-    public ModelAndView find(@PathVariable(value = "id") long id, HttpServletRequest request) {
+    public ModelAndView find(@PathVariable(value = "id") long id,
+                             HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
 

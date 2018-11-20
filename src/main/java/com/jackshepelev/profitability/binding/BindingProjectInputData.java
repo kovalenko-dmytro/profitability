@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class ProjectInputData {
+public class BindingProjectInputData {
 
     @NotNull
     @NotEmpty(message = "message = *Please provide name of project")

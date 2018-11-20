@@ -7,7 +7,8 @@ import com.jackshepelev.profitability.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EnergyEfficiencyRepository extends CommonRepository<EnergyEfficiency> {
+public interface EnergyEfficiencyRepository
+        extends CommonRepository<EnergyEfficiency> {
 
     EnergyEfficiency findByEem(EnergyEfficiencyMeasure measure);
     EnergyEfficiency findByEemAndAndEnergyType(EnergyEfficiencyMeasure measure, EnergyType type);

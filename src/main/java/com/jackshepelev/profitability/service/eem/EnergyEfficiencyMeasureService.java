@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.service.eem;
 
-import com.jackshepelev.profitability.binding.EemInputData;
+import com.jackshepelev.profitability.binding.BindingEEMInputData;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.eem.InputEEMData;
@@ -26,10 +26,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEfficiencyMeasure, EnergyEfficiencyMeasureRepository> {
+public class EnergyEfficiencyMeasureService
+        extends AbstractService<EnergyEfficiencyMeasure, EnergyEfficiencyMeasureRepository> {
 
     private final ProjectService projectService;
     private final EnergyEfficiencyRepository energyEfficiencyRepository;
+
     @Autowired
     public EnergyEfficiencyMeasureService(EnergyEfficiencyMeasureRepository repository,
                                           MessageSource messageSource,
@@ -45,7 +47,9 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
         return null;
     }
 
-    public EnergyEfficiencyMeasure save(long projectID, EemInputData data, Locale locale) throws ProfitabilityException {
+    public EnergyEfficiencyMeasure save(long projectID,
+                                        BindingEEMInputData data,
+                                        Locale locale) throws ProfitabilityException {
 
         Project project;
         try {
@@ -62,10 +66,7 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
         EnergyEfficiencyMeasure measure = new EnergyEfficiencyMeasure();
         measure.setInputEEMData(new InputEEMData());
 
-        measure.setName(data.getName());
-        measure.getInputEEMData().setAnnualOMCosts(data.getAnnualOMCosts());
-        measure.getInputEEMData().setEconomicLifeTime(data.getEconomicLifeTime());
-        measure.getInputEEMData().setInitialInvestment(data.getInitialInvestment());
+        setInputData(measure, data);
 
         List<EnergyEfficiency> energyEfficiencies = data.getEnergyEfficiencies();
         energyEfficiencyRepository.saveAll(energyEfficiencies);
@@ -74,14 +75,75 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
 
         measure.setResultEEMData(new ResultEEMData());
 
+        calculateResultData(measure, project);
+
+        measure.setProject(project);
+        return repository.save(measure);
+    }
+
+    public EnergyEfficiencyMeasure update(long eemID,
+                                          BindingEEMInputData data,
+                                          Locale locale) throws ProfitabilityException {
+
+        Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
+
+        if (optionalMeasure.isPresent()){
+            EnergyEfficiencyMeasure measure = optionalMeasure.get();
+            Project project = projectService.findById(measure.getProject().getId(), locale);
+
+            setInputData(measure, data);
+
+            measure.getInputEEMData().getEnergyEfficiencies()
+                    .forEach(
+                            energyEfficiency -> energyEfficiency
+                                    .setValue(
+                                            data.getEnergyEfficiencies()
+                                                    .stream()
+                                                    .filter(
+                                                            ee -> ee.getEnergyType().equals(energyEfficiency.getEnergyType())
+                                                    )
+                                                    .findFirst()
+                                                    .get()
+                                                    .getValue()
+                                    )
+                    );
+
+            calculateResultData(measure, project);
+
+            return repository.save(measure);
+        } else {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.project-not-exist", null, locale)
+            );
+        }
+    }
+
+    private void setInputData(EnergyEfficiencyMeasure measure, BindingEEMInputData data) {
+        measure.setName(data.getName());
+        measure.getInputEEMData().setAnnualOMCosts(data.getAnnualOMCosts());
+        measure.getInputEEMData().setEconomicLifeTime(data.getEconomicLifeTime());
+        measure.getInputEEMData().setInitialInvestment(data.getInitialInvestment());
+    }
+
+    private void calculateResultData(EnergyEfficiencyMeasure measure, Project project) {
+
         measure.getResultEEMData().setInitialSavings(
-                calculateInitialSavings(measure.getInputEEMData().getEnergyEfficiencies(), project.getTariffs())
+                calculateInitialSavings(
+                        measure.getInputEEMData().getEnergyEfficiencies(),
+                        project.getTariffs()
+                )
         );
         measure.getResultEEMData().setNetSavings(
-                measure.getResultEEMData().getInitialSavings().subtract(measure.getInputEEMData().getAnnualOMCosts())
+                calculateNetSavings(
+                        measure.getResultEEMData().getInitialSavings(),
+                        measure.getInputEEMData().getAnnualOMCosts()
+                )
         );
         measure.getResultEEMData().setPayBack(
-                calculatePayBack(measure.getInputEEMData().getInitialInvestment(), measure.getResultEEMData().getNetSavings())
+                calculatePayBack(
+                        measure.getInputEEMData().getInitialInvestment(),
+                        measure.getResultEEMData().getNetSavings()
+                )
         );
         measure.getResultEEMData().setPayOff(
                 calculatePayOff(
@@ -99,7 +161,6 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
                         measure.getInputEEMData().getInitialInvestment()
                 )
         );
-
         measure.getResultEEMData().setNetPresentValueQuotient(
                 calculateNPVQ(
                         measure.getResultEEMData().getNetSavings(),
@@ -108,33 +169,33 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
                         measure.getInputEEMData().getInitialInvestment()
                 )
         );
-
-        measure.setProject(project);
-
-
-        return repository.save(measure);
     }
 
-    private BigDecimal calculateNPVQ(BigDecimal netSavings,
-                                     BigDecimal realDiscountRate,
-                                     int economicLifeTime,
-                                     BigDecimal initialInvestment) {
+    private BigDecimal calculateInitialSavings(List<EnergyEfficiency> energyEfficiencies,
+                                               List<EnergyTariff> energyTariffs) {
 
-        BigDecimal npv =calculateNPV(netSavings, realDiscountRate, economicLifeTime,initialInvestment);
-        return npv.divide(initialInvestment, 3, RoundingMode.CEILING);
-    }
-
-    private BigDecimal calculateNPV(BigDecimal netSavings,
-                                    BigDecimal realDiscountRate,
-                                    int economicLifeTime,
-                                    BigDecimal initialInvestment) {
-
-        List<BigDecimal> npvList =calculateNPVList(netSavings, realDiscountRate, economicLifeTime);
         BigDecimal result = BigDecimal.valueOf(0);
-        for (BigDecimal value : npvList) {
-            result = result.add(value);
+        for (EnergyEfficiency efficiency : energyEfficiencies){
+            EnergyTariff tariff = energyTariffs
+                    .stream()
+                    .filter(t -> t.getEnergyType().getId() == efficiency.getEnergyType().getId())
+                    .findFirst()
+                    .get();
+            result = result.add(efficiency.getValue().multiply(tariff.getValue()));
         }
-        return result.subtract(initialInvestment);
+        return result;
+    }
+
+    private BigDecimal calculateNetSavings(BigDecimal initialSavings,
+                                           BigDecimal annualOMCosts) {
+
+        return initialSavings.subtract(annualOMCosts);
+    }
+
+    private BigDecimal calculatePayBack(BigDecimal initialInvestment,
+                                        BigDecimal netSavings) {
+
+        return initialInvestment.divide(netSavings,3, RoundingMode.CEILING);
     }
 
     private BigDecimal calculatePayOff(BigDecimal netSavings,
@@ -157,74 +218,48 @@ public class EnergyEfficiencyMeasureService extends AbstractService<EnergyEffici
         }
 
         return  BigDecimal.valueOf(index)
-                .add(BigDecimal.valueOf(1)
-                .subtract((sum.subtract(initialInvestment)).divide(currentValue, 3, RoundingMode.CEILING)));
+                .add(
+                        BigDecimal.valueOf(1)
+                                .subtract(
+                                        (sum.subtract(initialInvestment))
+                                                .divide(currentValue, 3, RoundingMode.CEILING)
+                                )
+                );
+    }
+
+    private BigDecimal calculateNPV(BigDecimal netSavings,
+                                    BigDecimal realDiscountRate,
+                                    int economicLifeTime,
+                                    BigDecimal initialInvestment) {
+
+        List<BigDecimal> npvList =calculateNPVList(netSavings, realDiscountRate, economicLifeTime);
+        BigDecimal result = BigDecimal.valueOf(0);
+        for (BigDecimal value : npvList) {
+            result = result.add(value);
+        }
+        return result.subtract(initialInvestment);
+    }
+
+    private BigDecimal calculateNPVQ(BigDecimal netSavings,
+                                     BigDecimal realDiscountRate,
+                                     int economicLifeTime,
+                                     BigDecimal initialInvestment) {
+
+        BigDecimal npv =calculateNPV(netSavings, realDiscountRate, economicLifeTime,initialInvestment);
+        return npv.divide(initialInvestment, 3, RoundingMode.CEILING);
     }
 
     private List<BigDecimal> calculateNPVList(BigDecimal netSavings,
-                                          BigDecimal realDiscountRate,
-                                          int economicLifeTime) {
+                                              BigDecimal realDiscountRate,
+                                              int economicLifeTime) {
 
         List<BigDecimal> result = new ArrayList<>();
         BigDecimal yearValue;
         for (int i = 1; i <= economicLifeTime; i++) {
-            yearValue = netSavings.divide((BigDecimal.valueOf(1).add(realDiscountRate)).pow(i), 3, RoundingMode.CEILING);
+            yearValue = netSavings
+                    .divide((BigDecimal.valueOf(1).add(realDiscountRate)).pow(i), 3, RoundingMode.CEILING);
             result.add(yearValue);
         }
-
         return result;
-    }
-
-    private BigDecimal calculatePayBack(BigDecimal initialInvestment,
-                                        BigDecimal netSavings) {
-
-        return initialInvestment.divide(netSavings,3, RoundingMode.CEILING);
-    }
-
-    private BigDecimal calculateInitialSavings(List<EnergyEfficiency> energyEfficiencies,
-                                               List<EnergyTariff> energyTariffs) {
-
-        BigDecimal result = BigDecimal.valueOf(0);
-        for (EnergyEfficiency efficiency : energyEfficiencies){
-            EnergyTariff tariff = energyTariffs
-                    .stream()
-                    .filter(t -> t.getEnergyType().getId() == efficiency.getEnergyType().getId())
-                    .findFirst()
-                    .get();
-            result = result.add(efficiency.getValue().multiply(tariff.getValue()));
-        }
-        return result;
-    }
-
-    public EnergyEfficiencyMeasure update(long eemID, EemInputData data, Locale locale) throws ProfitabilityException {
-
-        Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
-
-        if (optionalMeasure.isPresent()){
-            EnergyEfficiencyMeasure measure = optionalMeasure.get();
-            measure.setName(data.getName());
-            measure.getInputEEMData().setAnnualOMCosts(data.getAnnualOMCosts());
-            measure.getInputEEMData().setEconomicLifeTime(data.getEconomicLifeTime());
-            measure.getInputEEMData().setInitialInvestment(data.getInitialInvestment());
-
-            measure.getInputEEMData().getEnergyEfficiencies()
-                    .forEach(
-                            energyEfficiency -> energyEfficiency
-                                    .setValue(
-                                            data.getEnergyEfficiencies()
-                                                    .stream()
-                                                    .filter(ee -> ee.getEnergyType().equals(energyEfficiency.getEnergyType()))
-                                                    .findFirst()
-                                                    .get()
-                                                    .getValue()
-                                    )
-                    );
-
-            return repository.save(measure);
-        } else {
-            throw new ProfitabilityException(
-                    messageSource.getMessage("error.project-not-exist", null, locale)
-            );
-        }
     }
 }

@@ -5,5 +5,6 @@ import com.jackshepelev.profitability.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EnergyTariffRepository extends CommonRepository<EnergyTariff> {
+public interface EnergyTariffRepository
+        extends CommonRepository<EnergyTariff> {
 }
