@@ -44,13 +44,19 @@ public class ProjectService
         project.setDate(LocalDateTime.now());
         project.setUser(user);
 
-        BigDecimal realDiscountRate = (data.getNominalDiscountRate().subtract(data.getInflationRate()))
-                .divide(data.getInflationRate().add(BigDecimal.valueOf(1)), 3, RoundingMode.CEILING);
+        BigDecimal realDiscountRate = (
+                (BigDecimal.valueOf(1).add(data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING)))
+                        .divide(
+                                (BigDecimal.valueOf(1).add(data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING))),
+                                3,
+                                RoundingMode.CEILING
+                        )
+        ).subtract(BigDecimal.valueOf(1));
 
         project.setDiscountRate(
                 new DiscountRate(
-                        data.getNominalDiscountRate(),
-                        data.getInflationRate(),
+                        data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
+                        data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
                         realDiscountRate
                 )
         );
