@@ -161,6 +161,17 @@ public class EnergyEfficiencyMeasureService
                         measure.getInputEEMData().getInitialInvestment()
                 )
         );
+
+        measure.getResultEEMData().setInternalRateOfReturn(
+                calculateIRR(
+                        measure.getResultEEMData().getNetSavings(),
+                        project.getDiscountRate().getRealDiscountRate(),
+                        measure.getInputEEMData().getEconomicLifeTime(),
+                        measure.getInputEEMData().getInitialInvestment()
+                )
+        );
+
+
         measure.getResultEEMData().setNetPresentValueQuotient(
                 calculateNPVQ(
                         measure.getResultEEMData().getNetSavings(),
@@ -171,17 +182,51 @@ public class EnergyEfficiencyMeasureService
         );
     }
 
+    //edit
+    private BigDecimal calculateIRR(BigDecimal netSavings,
+                                    BigDecimal realDiscountRate,
+                                    int economicLifeTime,
+                                    BigDecimal initialInvestment) {
+
+        BigDecimal npv = calculateNPV(
+                netSavings,
+                realDiscountRate,
+                economicLifeTime,
+                initialInvestment
+        );
+        while (npv.compareTo(BigDecimal.valueOf(0)) != 0) {
+            if (npv.compareTo(BigDecimal.valueOf(0)) > 0) {
+                calculateIRR(
+                       netSavings,
+                       realDiscountRate.subtract(realDiscountRate.divide(BigDecimal.valueOf(10), 3, RoundingMode.CEILING)),
+                       economicLifeTime,
+                       initialInvestment
+                );
+            } else {
+                calculateIRR(
+                        netSavings,
+                        realDiscountRate.add(realDiscountRate.divide(BigDecimal.valueOf(10), 3, RoundingMode.CEILING)),
+                        economicLifeTime,
+                        initialInvestment
+                );
+            }
+        }
+        return realDiscountRate;
+    }
+
     private BigDecimal calculateInitialSavings(List<EnergyEfficiency> energyEfficiencies,
                                                List<EnergyTariff> energyTariffs) {
 
         BigDecimal result = BigDecimal.valueOf(0);
         for (EnergyEfficiency efficiency : energyEfficiencies){
-            EnergyTariff tariff = energyTariffs
+            Optional<EnergyTariff> optionalTariff = energyTariffs
                     .stream()
                     .filter(t -> t.getEnergyType().getId() == efficiency.getEnergyType().getId())
-                    .findFirst()
-                    .get();
-            result = result.add(efficiency.getValue().multiply(tariff.getValue()));
+                    .findFirst();
+            if (optionalTariff.isPresent()) {
+                EnergyTariff tariff = optionalTariff.get();
+                result = result.add(efficiency.getValue().multiply(tariff.getValue()));
+            }
         }
         return result;
     }
