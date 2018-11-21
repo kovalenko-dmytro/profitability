@@ -63,7 +63,10 @@
                                 <div th:each="ee,status : ${data.energyEfficiencies}" >
                                     <div class="form-group">
                                         <label th:text="${ee.energyType.name} + ', kWth'"></label>
-                                        <input type="text" class="form-control" th:field="*{energyEfficiencies[__${status.index}__].value}"  th:value="${ee.value}" required placeholder="0.000"/>
+                                        <input type="text" class="form-control" th:field="*{energyEfficiencies[__${status.index}__].value}"  th:value="${ee.value}"  placeholder="0.000"/>
+                                        <p class="text-danger" th:each="error: ${#fields.errors('*{energyEfficiencies[__${status.index}__].value}')}"
+                                           th:text="${error}">Validation error
+                                        </p>
                                     </div>
                                     <input class="invisible " th:field="*{energyEfficiencies[__${status.index}__].energyType.id}" th:value="${ee.energyType.id}" />
                                     <input class="invisible " th:field="*{energyEfficiencies[__${status.index}__].energyType.name}" th:value="${ee.energyType.name}" />

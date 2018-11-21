@@ -1,6 +1,7 @@
 package com.jackshepelev.profitability.controller.eem;
 
 import com.jackshepelev.profitability.binding.BindingEEMInputData;
+import com.jackshepelev.profitability.binding.ValidList;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
 import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.EnergyType;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,10 +53,10 @@ public class EnergyEfficiencyMeasureController {
             BindingEEMInputData data = new BindingEEMInputData();
             List<EnergyType> energyTypes = energyTypeService.findAll();
 
-            List<EnergyEfficiency> energyEfficiencies = energyTypes
+            ValidList<EnergyEfficiency> energyEfficiencies = energyTypes
                     .stream()
                     .map(EnergyEfficiency::new)
-                    .collect(Collectors.toCollection(LinkedList::new));
+                    .collect(Collectors.toCollection(ValidList::new));
 
             data.setEnergyEfficiencies(energyEfficiencies);
             view.addObject("data", data);
@@ -109,7 +109,12 @@ public class EnergyEfficiencyMeasureController {
             EnergyEfficiencyMeasure measure = energyEfficiencyMeasureService.findById(eemID, request.getLocale());
             view.addObject("eemID", measure.getId());
             BindingEEMInputData data = new BindingEEMInputData();
-            data.setEnergyEfficiencies(measure.getInputEEMData().getEnergyEfficiencies());
+            data.setEnergyEfficiencies(
+                    measure.getInputEEMData()
+                            .getEnergyEfficiencies()
+                            .stream()
+                            .collect(Collectors.toCollection(ValidList::new))
+            );
             data.setAnnualOMCosts(measure.getInputEEMData().getAnnualOMCosts());
             data.setEconomicLifeTime(measure.getInputEEMData().getEconomicLifeTime());
             data.setInitialInvestment(measure.getInputEEMData().getInitialInvestment());
