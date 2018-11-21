@@ -87,8 +87,17 @@ public class EnergyEfficiencyMeasureController {
                 view.setViewName("/pages/eem/eem-create");
                 return view;
             }
-            energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
-            view.setViewName("redirect:/projects/" + projectID + "");
+            try {
+                energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
+                view.setViewName("redirect:/projects/" + projectID + "");
+            } catch (ProfitabilityException e) {
+                view.addObject("error", e.getMessage());
+                view.addObject("project", projectService.findById(projectID, request.getLocale()));
+                view.addObject("data", data);
+                view.setViewName("/pages/eem/eem-create");
+                return view;
+            }
+
         } catch (ProfitabilityException e) {
             view.addObject("error", e.getMessage());
         }
@@ -148,8 +157,16 @@ public class EnergyEfficiencyMeasureController {
                 view.setViewName("/pages/eem/eem-update");
                 return view;
             }
-            energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
-            view.setViewName("redirect:/projects/" + projectID + "");
+            try {
+                energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
+                view.setViewName("redirect:/projects/" + projectID + "");
+            } catch (ProfitabilityException e) {
+                view.addObject("error", e.getMessage());
+                view.addObject("project", projectService.findById(projectID, request.getLocale()));
+                view.addObject("data", data);
+                view.setViewName("/pages/eem/eem-update");
+                return view;
+            }
         } catch (ProfitabilityException e) {
             view.addObject("error", e.getMessage());
         }

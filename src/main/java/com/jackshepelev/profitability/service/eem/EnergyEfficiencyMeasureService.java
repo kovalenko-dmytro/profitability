@@ -51,6 +51,12 @@ public class EnergyEfficiencyMeasureService
                                         BindingEEMInputData data,
                                         Locale locale) throws ProfitabilityException {
 
+        if (data.getEnergyEfficiencies().stream().allMatch(energyEfficiency -> energyEfficiency.getValue().compareTo(BigDecimal.valueOf(0)) == 0)) {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.ee-must-exist", null, locale)
+            );
+        }
+
         Project project;
         try {
             project  = projectService.findById(projectID, locale);
@@ -84,6 +90,12 @@ public class EnergyEfficiencyMeasureService
     public EnergyEfficiencyMeasure update(long eemID,
                                           BindingEEMInputData data,
                                           Locale locale) throws ProfitabilityException {
+
+        if (data.getEnergyEfficiencies().stream().allMatch(energyEfficiency -> energyEfficiency.getValue().compareTo(BigDecimal.valueOf(0)) == 0)) {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.ee-must-exist", null, locale)
+            );
+        }
 
         Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
 

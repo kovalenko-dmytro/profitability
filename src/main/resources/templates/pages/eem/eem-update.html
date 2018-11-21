@@ -72,6 +72,9 @@
                                     <input class="invisible " th:field="*{energyEfficiencies[__${status.index}__].energyType.name}" th:value="${ee.energyType.name}" />
 
                                 </div>
+                                <p class="text-danger" th:if="${error} != null"
+                                   th:text="${error}">
+                                </p>
                                 <p>*Notice: You may fill one or more fields</p>
                             </fieldset>
                             <fieldset class="scheduler-border">
