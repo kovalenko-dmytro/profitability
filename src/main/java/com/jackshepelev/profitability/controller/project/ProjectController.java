@@ -1,7 +1,7 @@
 package com.jackshepelev.profitability.controller.project;
 
 import com.jackshepelev.profitability.binding.BindingProjectInputData;
-import com.jackshepelev.profitability.binding.EnergyTariffList;
+import com.jackshepelev.profitability.binding.ValidList;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.project.Project;
@@ -62,10 +62,10 @@ public class ProjectController {
         List<EnergyType> energyTypes = energyTypeService.findAll();
         BindingProjectInputData data = new BindingProjectInputData();
 
-        EnergyTariffList<EnergyTariff> tariffs = energyTypes
+        ValidList<EnergyTariff> tariffs = energyTypes
                 .stream()
                 .map(EnergyTariff::new)
-                .collect(Collectors.toCollection(EnergyTariffList::new));
+                .collect(Collectors.toCollection(ValidList::new));
 
         data.setTariffs(tariffs);
 
@@ -105,7 +105,7 @@ public class ProjectController {
         try {
             Project project = projectService.findById(id, request.getLocale());
             BindingProjectInputData data = new BindingProjectInputData();
-            data.setTariffs(project.getTariffs().stream().collect(Collectors.toCollection(EnergyTariffList::new)));
+            data.setTariffs(project.getTariffs().stream().collect(Collectors.toCollection(ValidList::new)));
             data.setNominalDiscountRate(project.getDiscountRate().getNominalDiscountRate().multiply(BigDecimal.valueOf(100)));
             data.setInflationRate(project.getDiscountRate().getInflationRate().multiply(BigDecimal.valueOf(100)));
             data.setTitle(project.getTitle());

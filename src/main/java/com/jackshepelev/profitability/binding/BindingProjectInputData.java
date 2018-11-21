@@ -28,5 +28,5 @@ public class BindingProjectInputData {
     private BigDecimal inflationRate;
 
     @Valid
-    EnergyTariffList<EnergyTariff> tariffs;
+    ValidList<EnergyTariff> tariffs;
 }

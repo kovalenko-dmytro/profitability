@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class EnergyTariffList<E> extends ArrayList<E> {
+public class ValidList<E> extends ArrayList<E> {
     @Valid
     private List<E> list;
 }
