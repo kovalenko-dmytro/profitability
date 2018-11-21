@@ -73,4 +73,8 @@ public class ProjectService
     public Project update(Project entity, Locale locale) throws ProfitabilityException {
         return null;
     }
+
+    public Project update(long id, BindingProjectInputData data, Locale locale) {
+        return  null;
+    }
 }

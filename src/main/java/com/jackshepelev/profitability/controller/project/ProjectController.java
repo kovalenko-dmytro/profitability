@@ -3,6 +3,7 @@ package com.jackshepelev.profitability.controller.project;
 import com.jackshepelev.profitability.binding.BindingProjectInputData;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.EnergyType;
+import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
 import com.jackshepelev.profitability.service.project.EnergyTypeService;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +93,55 @@ public class ProjectController {
         projectService.save(user, data);
 
         view.setViewName("redirect:/projects");
+
+        return view;
+    }
+
+    @RequestMapping(value="/projects/{id}/update", method = RequestMethod.GET)
+    public ModelAndView update(@PathVariable(value = "id") long id,
+                               HttpServletRequest request) {
+
+        ModelAndView view = new ModelAndView();
+        try {
+            Project project = projectService.findById(id, request.getLocale());
+            BindingProjectInputData data = new BindingProjectInputData();
+            data.setTariffs(project.getTariffs());
+            data.setNominalDiscountRate(project.getDiscountRate().getNominalDiscountRate().multiply(BigDecimal.valueOf(100)));
+            data.setInflationRate(project.getDiscountRate().getInflationRate().multiply(BigDecimal.valueOf(100)));
+            data.setTitle(project.getTitle());
+            view.addObject("project", project);
+            view.addObject("data", data);
+        } catch (ProfitabilityException e) {
+            view.addObject("error", e.getMessage());
+        }
+
+        view.setViewName("/pages/project/project-update");
+
+        return view;
+    }
+
+    @RequestMapping(value="/projects/{id}", method = RequestMethod.PUT)
+    public ModelAndView update(@PathVariable(value = "id") long id,
+                               @Valid @ModelAttribute("data") BindingProjectInputData data,
+                               BindingResult result,
+                               HttpServletRequest request) {
+
+        ModelAndView view = new ModelAndView();
+
+        try {
+            if (result.hasErrors()) {
+                Project project = projectService.findById(id, request.getLocale());
+                view.addObject("project", project);
+                view.addObject("data", data);
+                view.addAllObjects(result.getModel());
+                view.setViewName("/pages/project/project-update");
+                return view;
+            }
+            projectService.update(id, data, request.getLocale());
+            view.setViewName("redirect:/projects");
+        } catch (ProfitabilityException e) {
+            view.addObject("error", e.getMessage());
+        }
 
         return view;
     }
