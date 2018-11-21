@@ -222,6 +222,7 @@ public class EnergyEfficiencyMeasureService
 
         BigDecimal result = BigDecimal.valueOf(0);
         for (EnergyEfficiency efficiency : energyEfficiencies){
+            if (efficiency.getValue() == null) {continue;}
             Optional<EnergyTariff> optionalTariff = energyTariffs
                     .stream()
                     .filter(t -> t.getEnergyType().getId() == efficiency.getEnergyType().getId())
