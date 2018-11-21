@@ -69,10 +69,14 @@
                                 <div th:each="tariff,status : ${data.tariffs}" >
                                     <div class="form-group">
                                         <label th:text="${tariff.energyType.name} + ', USD/kWth'"></label>
-                                        <input type="text" class="form-control" th:field="*{tariffs[__${status.index}__].value}"  th:value="${tariff.value}" required placeholder="0.000"/>
+                                        <input type="text" class="form-control" th:field="*{tariffs[__${status.index}__].value}" th:value="${tariff.value}" placeholder="0.000"/>
+                                        <p class="text-danger" th:each="error: ${#fields.errors('*{tariffs[__${status.index}__].value}')}"
+                                           th:text="${error}">Validation error
+                                        </p>
                                     </div>
                                     <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.id}" th:value="${tariff.energyType.id}" />
                                     <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.name}" th:value="${tariff.energyType.name}" />
+
                                 </div>
                             </fieldset>
                             <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>

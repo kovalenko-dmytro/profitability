@@ -3,12 +3,12 @@ package com.jackshepelev.profitability.binding;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 public class BindingProjectInputData {
@@ -27,5 +27,6 @@ public class BindingProjectInputData {
     @DecimalMin("0.001")
     private BigDecimal inflationRate;
 
-    List<EnergyTariff> tariffs;
+    @Valid
+    EnergyTariffList<EnergyTariff> tariffs;
 }
