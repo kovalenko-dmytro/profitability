@@ -182,7 +182,6 @@ public class EnergyEfficiencyMeasureService
         );
     }
 
-    //edit
     private BigDecimal calculateIRR(BigDecimal netSavings,
                                     BigDecimal realDiscountRate,
                                     int economicLifeTime,
@@ -194,24 +193,28 @@ public class EnergyEfficiencyMeasureService
                 economicLifeTime,
                 initialInvestment
         );
-        while (npv.compareTo(BigDecimal.valueOf(0)) != 0) {
+        BigDecimal result = realDiscountRate;
+        BigDecimal roundZero = npv.divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING).abs();
+        while (npv.abs().compareTo(roundZero) > 0 ) {
             if (npv.compareTo(BigDecimal.valueOf(0)) > 0) {
-                calculateIRR(
-                       netSavings,
-                       realDiscountRate.subtract(realDiscountRate.divide(BigDecimal.valueOf(10), 3, RoundingMode.CEILING)),
-                       economicLifeTime,
-                       initialInvestment
+                result = result.add(realDiscountRate.divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING));
+                npv = calculateNPV(
+                        netSavings,
+                        result,
+                        economicLifeTime,
+                        initialInvestment
                 );
             } else {
-                calculateIRR(
+                result = result.subtract(realDiscountRate.divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING));
+                npv = calculateNPV(
                         netSavings,
-                        realDiscountRate.add(realDiscountRate.divide(BigDecimal.valueOf(10), 3, RoundingMode.CEILING)),
+                        result,
                         economicLifeTime,
                         initialInvestment
                 );
             }
         }
-        return realDiscountRate;
+        return result.multiply(BigDecimal.valueOf(100));
     }
 
     private BigDecimal calculateInitialSavings(List<EnergyEfficiency> energyEfficiencies,
