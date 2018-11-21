@@ -11,6 +11,7 @@ import com.jackshepelev.profitability.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,9 +74,17 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
-    public ModelAndView create(@Valid @ModelAttribute BindingProjectInputData data) {
+    public ModelAndView create(@Valid @ModelAttribute("data") BindingProjectInputData data,
+                               BindingResult result) {
 
         ModelAndView view = new ModelAndView();
+
+        if (result.hasErrors()) {
+            view.addObject("data", data);
+            view.addAllObjects(result.getModel());
+            view.setViewName("/pages/project/project-create");
+            return view;
+        }
 
         User user = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 

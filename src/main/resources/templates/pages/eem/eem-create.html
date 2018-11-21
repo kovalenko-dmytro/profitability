@@ -43,7 +43,7 @@
                                 <div class="form-group">
                                     <label for="name">EEM name</label>
                                     <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required/>
-                                    <p th:each="error: ${#fields.errors('name')}"
+                                    <p class="text-danger" th:each="error: ${#fields.errors('name')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
@@ -52,7 +52,7 @@
                                 <div class="form-group">
                                     <label for="initialInvestment">Initial investment, USD</label>
                                     <input type="text" class="form-control" id="initialInvestment" name="initialInvestment" th:field="*{initialInvestment}" required placeholder="0.000"/>
-                                    <p th:each="error: ${#fields.errors('initialInvestment')}"
+                                    <p class="text-danger" th:each="error: ${#fields.errors('initialInvestment')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
@@ -74,7 +74,7 @@
                                 <div class="form-group">
                                     <label for="annualOMCosts">Annual Operation & Maintain Costs, USD</label>
                                     <input type="text" class="form-control" id="annualOMCosts" name="annualOMCosts" th:field="*{annualOMCosts}" required placeholder="0.000"/>
-                                    <p th:each="error: ${#fields.errors('annualOMCosts')}"
+                                    <p class="text-danger" th:each="error: ${#fields.errors('annualOMCosts')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
@@ -83,7 +83,7 @@
                                 <div class="form-group">
                                     <label for="economicLifeTime">Economic Lifetime, years</label>
                                     <input type="number" class="form-control" id="economicLifeTime" name="economicLifeTime" th:field="*{economicLifeTime}" required placeholder="0"/>
-                                    <p th:each="error: ${#fields.errors('economicLifeTime')}"
+                                    <p class="text-danger" th:each="error: ${#fields.errors('economicLifeTime')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>

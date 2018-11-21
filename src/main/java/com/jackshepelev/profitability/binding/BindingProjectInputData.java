@@ -14,7 +14,7 @@ import java.util.List;
 public class BindingProjectInputData {
 
     @NotNull
-    @NotEmpty(message = "message = *Please provide name of project")
+    @NotEmpty
     private String title;
 
     @NotNull

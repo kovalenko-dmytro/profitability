@@ -37,5 +37,4 @@ public class EnergyTariff extends AbstractEntity {
     public EnergyTariff(EnergyType energyType) {
         this.energyType = energyType;
     }
-
 }

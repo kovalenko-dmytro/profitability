@@ -71,7 +71,7 @@ public class EnergyEfficiencyMeasureController {
 
     @RequestMapping(value = "/projects/{projectID}/eems", method = RequestMethod.POST)
     public ModelAndView create(@PathVariable(value = "projectID") long projectID,
-                               @Valid @ModelAttribute BindingEEMInputData data,
+                               @Valid @ModelAttribute("data") BindingEEMInputData data,
                                BindingResult result,
                                HttpServletRequest request) {
 
@@ -79,10 +79,12 @@ public class EnergyEfficiencyMeasureController {
 
         try {
             if (result.hasErrors()) {
-                view.setViewName("/pages/eem/eem-create");
+
                 Project project = projectService.findById(projectID, request.getLocale());
                 view.addObject("project", project);
                 view.addObject("data", data);
+                view.addAllObjects(result.getModel());
+                view.setViewName("/pages/eem/eem-create");
                 return view;
             }
             energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
@@ -126,12 +128,21 @@ public class EnergyEfficiencyMeasureController {
     @RequestMapping(value="/projects/{projectID}/eems/{eemID}", method = RequestMethod.PUT)
     public ModelAndView update(@PathVariable(value = "projectID") long projectID,
                                @PathVariable(value = "eemID") long eemID,
-                               @ModelAttribute BindingEEMInputData data,
+                               @Valid @ModelAttribute("data") BindingEEMInputData data,
+                               BindingResult result,
                                HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
 
         try {
+            if (result.hasErrors()) {
+                Project project = projectService.findById(projectID, request.getLocale());
+                view.addObject("project", project);
+                view.addObject("data", data);
+                view.addAllObjects(result.getModel());
+                view.setViewName("/pages/eem/eem-update");
+                return view;
+            }
             energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
             view.setViewName("redirect:/projects/" + projectID + "");
         } catch (ProfitabilityException e) {

@@ -11,7 +11,7 @@ import java.util.List;
 public class BindingEEMInputData {
 
     @NotNull
-    @NotEmpty(message = "message = *Please provide name of measure")
+    @NotEmpty
     private String name;
 
     @NotNull

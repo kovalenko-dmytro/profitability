@@ -41,8 +41,8 @@
                             <fieldset class="scheduler-border">
                                 <div class="form-group">
                                     <label for="title">Project title:</label>
-                                    <input type="text" class="form-control" id="title" name="title" th:field="*{title}"  placeholder="Project name" />
-                                    <p th:each="error: ${#fields.errors('title')}"
+                                    <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required placeholder="Project name" />
+                                    <p class="text-danger" th:each="error: ${#fields.errors('title')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
@@ -51,15 +51,15 @@
                                 <legend class="scheduler-border">Discount rates</legend>
                                 <div class="form-group">
                                     <label for="nominalDiscountRate">Nominal discount rate:</label>
-                                    <input type="text"class="form-control" id="nominalDiscountRate" name="nominalDiscountRate" th:field="*{nominalDiscountRate}" placeholder="0.000" />
-                                    <p th:each="error: ${#fields.errors('nominalDiscountRate')}"
+                                    <input type="text"class="form-control" id="nominalDiscountRate" name="nominalDiscountRate" required th:field="*{nominalDiscountRate}" placeholder="0.000" />
+                                    <p class="text-danger" th:each="error: ${#fields.errors('nominalDiscountRate')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
                                 <div class="form-group">
                                     <label for="inflationRate">Inflation rate:</label>
-                                    <input type="text" class="form-control" id="inflationRate" name="inflationRate" th:field="*{inflationRate}" placeholder="0.000" />
-                                    <p th:each="error: ${#fields.errors('inflationRate')}"
+                                    <input type="text" class="form-control" id="inflationRate" name="inflationRate" th:field="*{inflationRate}" required placeholder="0.000" />
+                                    <p class="text-danger" th:each="error: ${#fields.errors('inflationRate')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
@@ -69,10 +69,10 @@
                                 <div th:each="tariff,status : ${data.tariffs}" >
                                     <div class="form-group">
                                         <label th:text="${tariff.energyType.name} + ' USD/kWth'"></label>
-                                        <input type="text" class="form-control" th:field="*{tariffs[__${status.index}__].value}"  th:value="${tariff.value}" placeholder="0.000"/>
+                                        <input type="text" class="form-control" th:field="*{tariffs[__${status.index}__].value}"  th:value="${tariff.value}" required placeholder="0.000"/>
                                     </div>
-                                    <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.id}" th:value="${tariff.energyType.id}" placeholder="0.000"/>
-                                    <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.name}" th:value="${tariff.energyType.name}" placeholder="0.000"/>
+                                    <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.id}" th:value="${tariff.energyType.id}" />
+                                    <input class="invisible " th:field="*{tariffs[__${status.index}__].energyType.name}" th:value="${tariff.energyType.name}" />
                                 </div>
                             </fieldset>
                             <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
