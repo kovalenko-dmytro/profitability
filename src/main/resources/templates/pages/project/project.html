@@ -19,9 +19,14 @@
                 <li>
                     <a th:href="@{/}"><i class="fa fa-dashboard fa-fw"></i>Profitability</a>
                 </li>
-
                 <li>
-                    <a  th:href="@{'/projects/' + ${project.id} + '/eems/create'}">Create EEM</a>
+                    <a class="text-success"  th:href="@{'/projects/' + ${project.id} + '/eems/create'}">Create EEM</a>
+                </li>
+                <li>
+                    <a class="text-success" th:href="@{/projects}">Project list</a>
+                </li>
+                <li>
+                    <a class="text-success" th:href="@{'/projects/' + ${project.id} + '/update'}">Edit project input data</a>
                 </li>
             </ul>
         </div>
