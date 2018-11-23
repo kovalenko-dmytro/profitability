@@ -7,7 +7,7 @@ import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
-import com.jackshepelev.profitability.service.project.EnergyTypeService;
+import com.jackshepelev.profitability.service.energytype.EnergyTypeService;
 import com.jackshepelev.profitability.service.project.ProjectService;
 import com.jackshepelev.profitability.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

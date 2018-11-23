@@ -1,8 +1,8 @@
-package com.jackshepelev.profitability.service.eem;
+package com.jackshepelev.profitability.service.measure;
 
 import com.jackshepelev.profitability.binding.BindingEEMInputData;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiency;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.jackshepelev.profitability.entity.eem;
+package com.jackshepelev.profitability.entity.measure;
 
 import com.jackshepelev.profitability.entity.AbstractEntity;
 import com.jackshepelev.profitability.entity.project.Project;

@@ -1,14 +1,14 @@
-package com.jackshepelev.profitability.service.eem;
+package com.jackshepelev.profitability.service.measure;
 
 import com.jackshepelev.profitability.binding.BindingEEMInputData;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
-import com.jackshepelev.profitability.entity.eem.InputEEMData;
-import com.jackshepelev.profitability.entity.eem.ResultEEMData;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiency;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiencyMeasure;
+import com.jackshepelev.profitability.entity.measure.InputEEMData;
+import com.jackshepelev.profitability.entity.measure.ResultEEMData;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
-import com.jackshepelev.profitability.repository.eem.EnergyEfficiencyMeasureRepository;
-import com.jackshepelev.profitability.repository.eem.EnergyEfficiencyRepository;
+import com.jackshepelev.profitability.repository.measure.EnergyEfficiencyMeasureRepository;
+import com.jackshepelev.profitability.repository.measure.EnergyEfficiencyRepository;
 import com.jackshepelev.profitability.service.AbstractService;
 import com.jackshepelev.profitability.service.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class EnergyEfficiencyMeasureService
 
         List<EnergyEfficiency> energyEfficiencies = data.getEnergyEfficiencies();
         energyEfficiencyRepository.saveAll(energyEfficiencies);
-        energyEfficiencies.forEach(energyEfficiency -> energyEfficiency.setEem(measure));
+        energyEfficiencies.forEach(energyEfficiency -> energyEfficiency.setMeasure(measure));
         measure.getInputEEMData().setEnergyEfficiencies(energyEfficiencies);
 
         measure.setResultEEMData(new ResultEEMData());
@@ -109,9 +109,8 @@ public class EnergyEfficiencyMeasureService
                                             data.getEnergyEfficiencies()
                                                     .stream()
                                                     .filter(
-                                                            ee -> ee.getEnergyType().equals(energyEfficiency.getEnergyType())
-                                                    )
-                                                    .findFirst()
+                                                            ee -> ee.getEnergyType().getId() == energyEfficiency.getEnergyType().getId()
+                                                    ).findFirst()
                                                     .get()
                                                     .getValue()
                                     )

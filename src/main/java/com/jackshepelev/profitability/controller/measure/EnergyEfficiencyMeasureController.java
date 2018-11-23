@@ -1,14 +1,14 @@
-package com.jackshepelev.profitability.controller.eem;
+package com.jackshepelev.profitability.controller.measure;
 
 import com.jackshepelev.profitability.binding.BindingEEMInputData;
 import com.jackshepelev.profitability.binding.ValidList;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiency;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
-import com.jackshepelev.profitability.service.eem.EnergyEfficiencyMeasureService;
-import com.jackshepelev.profitability.service.project.EnergyTypeService;
+import com.jackshepelev.profitability.service.energytype.EnergyTypeService;
+import com.jackshepelev.profitability.service.measure.EnergyEfficiencyMeasureService;
 import com.jackshepelev.profitability.service.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,7 +61,7 @@ public class EnergyEfficiencyMeasureController {
         data.setEnergyEfficiencies(energyEfficiencies);
         view.addObject("data", data);
 
-        view.setViewName("/pages/eem/eem-create");
+        view.setViewName("/pages/measure/measure-create");
         return view;
     }
 
@@ -79,7 +79,7 @@ public class EnergyEfficiencyMeasureController {
             view.addObject("project", project);
             view.addObject("data", data);
             view.addAllObjects(result.getModel());
-            view.setViewName("/pages/eem/eem-create");
+            view.setViewName("/pages/measure/measure-create");
             return view;
         }
 
@@ -90,7 +90,7 @@ public class EnergyEfficiencyMeasureController {
             view.addObject("error", e.getMessage());
             view.addObject("project", projectService.findById(projectID, request.getLocale()));
             view.addObject("data", data);
-            view.setViewName("/pages/eem/eem-create");
+            view.setViewName("/pages/measure/measure-create");
             return view;
         }
 
@@ -122,7 +122,7 @@ public class EnergyEfficiencyMeasureController {
         data.setName(measure.getName());
 
         view.addObject("data", data);
-        view.setViewName("/pages/eem/eem-update");
+        view.setViewName("/pages/measure/measure-update");
 
         return view;
     }
@@ -141,7 +141,7 @@ public class EnergyEfficiencyMeasureController {
             view.addObject("project", project);
             view.addObject("data", data);
             view.addAllObjects(result.getModel());
-            view.setViewName("/pages/eem/eem-update");
+            view.setViewName("/pages/measure/measure-update");
             return view;
         }
         try {
@@ -151,7 +151,7 @@ public class EnergyEfficiencyMeasureController {
             view.addObject("error", e.getMessage());
             view.addObject("project", projectService.findById(projectID, request.getLocale()));
             view.addObject("data", data);
-            view.setViewName("/pages/eem/eem-update");
+            view.setViewName("/pages/measure/measure-update");
             return view;
         }
 

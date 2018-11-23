@@ -1,4 +1,4 @@
-package com.jackshepelev.profitability.entity.eem;
+package com.jackshepelev.profitability.entity.measure;
 
 import com.jackshepelev.profitability.entity.AbstractEntity;
 import com.jackshepelev.profitability.entity.project.EnergyType;
@@ -33,7 +33,7 @@ public class EnergyEfficiency extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "eem_id")
-    private EnergyEfficiencyMeasure eem;
+    private EnergyEfficiencyMeasure measure;
 
     public EnergyEfficiency(EnergyType energyType) {
         this.energyType = energyType;

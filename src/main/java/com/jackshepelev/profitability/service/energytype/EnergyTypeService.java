@@ -1,4 +1,4 @@
-package com.jackshepelev.profitability.service.project;
+package com.jackshepelev.profitability.service.energytype;
 
 import com.jackshepelev.profitability.entity.project.EnergyType;
 import com.jackshepelev.profitability.repository.project.EnergyTypeRepository;

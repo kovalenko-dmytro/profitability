@@ -1,4 +1,4 @@
-package com.jackshepelev.profitability.entity.eem;
+package com.jackshepelev.profitability.entity.measure;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class InputEEMData {
     @DecimalMin("0.000")
     private BigDecimal initialInvestment;
 
-    @OneToMany(mappedBy = "eem", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "measure", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<EnergyEfficiency> energyEfficiencies;
 
     @Column(name = "annual_om_costs", precision=12, scale=3)

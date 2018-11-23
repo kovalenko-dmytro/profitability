@@ -1,4 +1,4 @@
-package com.jackshepelev.profitability.entity.eem;
+package com.jackshepelev.profitability.entity.measure;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

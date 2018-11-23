@@ -1,6 +1,6 @@
 package com.jackshepelev.profitability.binding;
 
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiency;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiency;
 import lombok.Data;
 
 import javax.validation.Valid;

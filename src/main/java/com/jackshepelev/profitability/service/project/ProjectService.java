@@ -1,17 +1,17 @@
 package com.jackshepelev.profitability.service.project;
 
 import com.jackshepelev.profitability.binding.BindingProjectInputData;
-import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
+import com.jackshepelev.profitability.entity.measure.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.DiscountRate;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
-import com.jackshepelev.profitability.repository.eem.EnergyEfficiencyMeasureRepository;
+import com.jackshepelev.profitability.repository.measure.EnergyEfficiencyMeasureRepository;
 import com.jackshepelev.profitability.repository.project.EnergyTariffRepository;
 import com.jackshepelev.profitability.repository.project.ProjectRepository;
 import com.jackshepelev.profitability.service.AbstractService;
-import com.jackshepelev.profitability.service.eem.IndicatorsEEMService;
+import com.jackshepelev.profitability.service.measure.IndicatorsEEMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
