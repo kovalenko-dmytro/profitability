@@ -46,26 +46,22 @@ public class EnergyEfficiencyMeasureController {
                                HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
-        try {
-            Project project = projectService.findById(projectID, request.getLocale());
-            view.addObject("project", project);
 
-            BindingEEMInputData data = new BindingEEMInputData();
-            List<EnergyType> energyTypes = energyTypeService.findAll();
+        Project project = projectService.findById(projectID, request.getLocale());
+        view.addObject("project", project);
 
-            ValidList<EnergyEfficiency> energyEfficiencies = energyTypes
-                    .stream()
-                    .map(EnergyEfficiency::new)
-                    .collect(Collectors.toCollection(ValidList::new));
+        BindingEEMInputData data = new BindingEEMInputData();
+        List<EnergyType> energyTypes = energyTypeService.findAll();
 
-            data.setEnergyEfficiencies(energyEfficiencies);
-            view.addObject("data", data);
-        } catch (ProfitabilityException e) {
-            view.addObject("error", e.getMessage());
-        }
+        ValidList<EnergyEfficiency> energyEfficiencies = energyTypes
+                .stream()
+                .map(EnergyEfficiency::new)
+                .collect(Collectors.toCollection(ValidList::new));
+
+        data.setEnergyEfficiencies(energyEfficiencies);
+        view.addObject("data", data);
 
         view.setViewName("/pages/eem/eem-create");
-
         return view;
     }
 
@@ -77,29 +73,25 @@ public class EnergyEfficiencyMeasureController {
 
         ModelAndView view = new ModelAndView();
 
+        if (result.hasErrors()) {
+
+            Project project = projectService.findById(projectID, request.getLocale());
+            view.addObject("project", project);
+            view.addObject("data", data);
+            view.addAllObjects(result.getModel());
+            view.setViewName("/pages/eem/eem-create");
+            return view;
+        }
+
         try {
-            if (result.hasErrors()) {
-
-                Project project = projectService.findById(projectID, request.getLocale());
-                view.addObject("project", project);
-                view.addObject("data", data);
-                view.addAllObjects(result.getModel());
-                view.setViewName("/pages/eem/eem-create");
-                return view;
-            }
-            try {
-                energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
-                view.setViewName("redirect:/projects/" + projectID + "");
-            } catch (ProfitabilityException e) {
-                view.addObject("error", e.getMessage());
-                view.addObject("project", projectService.findById(projectID, request.getLocale()));
-                view.addObject("data", data);
-                view.setViewName("/pages/eem/eem-create");
-                return view;
-            }
-
+            energyEfficiencyMeasureService.save(projectID, data, request.getLocale());
+            view.setViewName("redirect:/projects/" + projectID + "");
         } catch (ProfitabilityException e) {
             view.addObject("error", e.getMessage());
+            view.addObject("project", projectService.findById(projectID, request.getLocale()));
+            view.addObject("data", data);
+            view.setViewName("/pages/eem/eem-create");
+            return view;
         }
 
         return view;
@@ -111,29 +103,25 @@ public class EnergyEfficiencyMeasureController {
                                HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
-        try {
-            Project project = projectService.findById(projectID, request.getLocale());
-            view.addObject("project", project);
 
-            EnergyEfficiencyMeasure measure = energyEfficiencyMeasureService.findById(eemID, request.getLocale());
-            view.addObject("eemID", measure.getId());
-            BindingEEMInputData data = new BindingEEMInputData();
-            data.setEnergyEfficiencies(
-                    measure.getInputEEMData()
-                            .getEnergyEfficiencies()
-                            .stream()
-                            .collect(Collectors.toCollection(ValidList::new))
-            );
-            data.setAnnualOMCosts(measure.getInputEEMData().getAnnualOMCosts());
-            data.setEconomicLifeTime(measure.getInputEEMData().getEconomicLifeTime());
-            data.setInitialInvestment(measure.getInputEEMData().getInitialInvestment());
-            data.setName(measure.getName());
+        Project project = projectService.findById(projectID, request.getLocale());
+        view.addObject("project", project);
 
-            view.addObject("data", data);
-        } catch (ProfitabilityException e) {
-            view.addObject("error", e.getMessage());
-        }
+        EnergyEfficiencyMeasure measure = energyEfficiencyMeasureService.findById(eemID, request.getLocale());
+        view.addObject("eemID", measure.getId());
+        BindingEEMInputData data = new BindingEEMInputData();
+        data.setEnergyEfficiencies(
+                measure.getInputEEMData()
+                        .getEnergyEfficiencies()
+                        .stream()
+                        .collect(Collectors.toCollection(ValidList::new))
+        );
+        data.setAnnualOMCosts(measure.getInputEEMData().getAnnualOMCosts());
+        data.setEconomicLifeTime(measure.getInputEEMData().getEconomicLifeTime());
+        data.setInitialInvestment(measure.getInputEEMData().getInitialInvestment());
+        data.setName(measure.getName());
 
+        view.addObject("data", data);
         view.setViewName("/pages/eem/eem-update");
 
         return view;
@@ -148,27 +136,23 @@ public class EnergyEfficiencyMeasureController {
 
         ModelAndView view = new ModelAndView();
 
+        if (result.hasErrors()) {
+            Project project = projectService.findById(projectID, request.getLocale());
+            view.addObject("project", project);
+            view.addObject("data", data);
+            view.addAllObjects(result.getModel());
+            view.setViewName("/pages/eem/eem-update");
+            return view;
+        }
         try {
-            if (result.hasErrors()) {
-                Project project = projectService.findById(projectID, request.getLocale());
-                view.addObject("project", project);
-                view.addObject("data", data);
-                view.addAllObjects(result.getModel());
-                view.setViewName("/pages/eem/eem-update");
-                return view;
-            }
-            try {
-                energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
-                view.setViewName("redirect:/projects/" + projectID + "");
-            } catch (ProfitabilityException e) {
-                view.addObject("error", e.getMessage());
-                view.addObject("project", projectService.findById(projectID, request.getLocale()));
-                view.addObject("data", data);
-                view.setViewName("/pages/eem/eem-update");
-                return view;
-            }
+            energyEfficiencyMeasureService.update(eemID, data, request.getLocale());
+            view.setViewName("redirect:/projects/" + projectID + "");
         } catch (ProfitabilityException e) {
             view.addObject("error", e.getMessage());
+            view.addObject("project", projectService.findById(projectID, request.getLocale()));
+            view.addObject("data", data);
+            view.setViewName("/pages/eem/eem-update");
+            return view;
         }
 
         return view;

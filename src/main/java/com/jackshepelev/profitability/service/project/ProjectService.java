@@ -57,11 +57,6 @@ public class ProjectService
         return repository.save(project);
     }
 
-    @Override
-    public Project update(Project entity, Locale locale) throws ProfitabilityException {
-        return null;
-    }
-
     public Project update(long id,
                           BindingProjectInputData data,
                           Locale locale) throws ProfitabilityException {

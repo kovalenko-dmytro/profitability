@@ -102,19 +102,15 @@ public class ProjectController {
                                HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
-        try {
-            Project project = projectService.findById(id, request.getLocale());
-            BindingProjectInputData data = new BindingProjectInputData();
-            data.setTariffs(project.getTariffs().stream().collect(Collectors.toCollection(ValidList::new)));
-            data.setNominalDiscountRate(project.getDiscountRate().getNominalDiscountRate().multiply(BigDecimal.valueOf(100)));
-            data.setInflationRate(project.getDiscountRate().getInflationRate().multiply(BigDecimal.valueOf(100)));
-            data.setTitle(project.getTitle());
-            view.addObject("project", project);
-            view.addObject("data", data);
-        } catch (ProfitabilityException e) {
-            view.addObject("error", e.getMessage());
-        }
 
+        Project project = projectService.findById(id, request.getLocale());
+        BindingProjectInputData data = new BindingProjectInputData();
+        data.setTariffs(project.getTariffs().stream().collect(Collectors.toCollection(ValidList::new)));
+        data.setNominalDiscountRate(project.getDiscountRate().getNominalDiscountRate().multiply(BigDecimal.valueOf(100)));
+        data.setInflationRate(project.getDiscountRate().getInflationRate().multiply(BigDecimal.valueOf(100)));
+        data.setTitle(project.getTitle());
+        view.addObject("project", project);
+        view.addObject("data", data);
         view.setViewName("/pages/project/project-update");
 
         return view;
@@ -151,12 +147,7 @@ public class ProjectController {
                              HttpServletRequest request) {
 
         ModelAndView view = new ModelAndView();
-
-        try {
-            view.addObject("project", projectService.findById(id, request.getLocale()));
-        } catch (ProfitabilityException e) {
-            view.addObject("error", e.getMessage());
-        }
+        view.addObject("project", projectService.findById(id, request.getLocale()));
         view.setViewName("/pages/project/project");
 
         return view;

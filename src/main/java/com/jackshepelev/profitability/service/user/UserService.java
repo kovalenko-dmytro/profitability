@@ -54,7 +54,6 @@ public class UserService
         return repository.findByEmail(email);
     }
 
-    @Override
     public User update(User entity, Locale locale) throws ProfitabilityException {
 
         Optional<User> optionalUser = repository.findById(entity.getId());

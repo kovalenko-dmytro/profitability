@@ -43,11 +43,6 @@ public class EnergyEfficiencyMeasureService
         this.indicatorsEEMService = indicatorsEEMService;
     }
 
-    @Override
-    public EnergyEfficiencyMeasure update(EnergyEfficiencyMeasure entity, Locale locale) throws ProfitabilityException {
-        return null;
-    }
-
     public EnergyEfficiencyMeasure save(long projectID,
                                         BindingEEMInputData data,
                                         Locale locale) throws ProfitabilityException {
@@ -58,12 +53,7 @@ public class EnergyEfficiencyMeasureService
             );
         }
 
-        Project project;
-        try {
-            project  = projectService.findById(projectID, locale);
-        } catch (ProfitabilityException e) {
-           project = null;
-        }
+        Project project = projectService.findById(projectID, locale);
 
         if (project == null){
             throw new ProfitabilityException(
@@ -103,6 +93,12 @@ public class EnergyEfficiencyMeasureService
         if (optionalMeasure.isPresent()){
             EnergyEfficiencyMeasure measure = optionalMeasure.get();
             Project project = projectService.findById(measure.getProject().getId(), locale);
+
+            if (project == null){
+                throw new ProfitabilityException(
+                        messageSource.getMessage("error.project-not-exist", null, locale)
+                );
+            }
 
             indicatorsEEMService.setInputData(measure, data);
 
