@@ -19,6 +19,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,31 +41,9 @@ public class ProjectService
     public Project save(User user, BindingProjectInputData data) {
 
         Project project = new Project();
-        project.setTitle(data.getTitle());
         project.setDate(LocalDateTime.now());
         project.setUser(user);
-
-        BigDecimal realDiscountRate = (
-                (BigDecimal.valueOf(1).add(data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING)))
-                        .divide(
-                                (BigDecimal.valueOf(1).add(data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING))),
-                                3,
-                                RoundingMode.CEILING
-                        )
-        ).subtract(BigDecimal.valueOf(1));
-
-        project.setDiscountRate(
-                new DiscountRate(
-                        data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
-                        data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
-                        realDiscountRate
-                )
-        );
-
-        List<EnergyTariff> tariffs = data.getTariffs();
-        energyTariffRepository.saveAll(tariffs);
-        tariffs.forEach(tariff -> tariff.setProject(project));
-        project.setTariffs(tariffs);
+        setProjectData(project, data);
 
         return repository.save(project);
     }
@@ -74,7 +53,57 @@ public class ProjectService
         return null;
     }
 
-    public Project update(long id, BindingProjectInputData data, Locale locale) {
-        return  null;
+    public Project update(long id,
+                          BindingProjectInputData data,
+                          Locale locale) throws ProfitabilityException {
+
+        Optional<Project> optionalProject = repository.findById(id);
+
+        if (!optionalProject.isPresent()) {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.project-not-exist", null, locale)
+            );
+        }
+
+        Project project = optionalProject.get();
+        setProjectData(project, data);
+        repository.save(project);
+
+        return  project;
+    }
+
+    private void setProjectData(Project project, BindingProjectInputData data) {
+        project.setTitle(data.getTitle());
+        BigDecimal realDiscountRate = calculateRealDiscountRate(data);
+        project.setDiscountRate(
+                new DiscountRate(
+                        data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
+                        data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING),
+                        realDiscountRate
+                )
+        );
+
+        if (project.getId() != 0) {
+            project.getTariffs().forEach(energyTariff -> {
+                energyTariff.setValue(
+                        data.getTariffs()
+                                .stream()
+                                .filter(dataTariff -> dataTariff.getEnergyType().getId() == energyTariff.getEnergyType().getId())
+                                .findFirst()
+                                .get()
+                                .getValue()
+                );
+            });
+        } else {
+            List<EnergyTariff> tariffs = data.getTariffs();
+            energyTariffRepository.saveAll(tariffs);
+            tariffs.forEach(tariff -> tariff.setProject(project));
+        }
+    }
+
+    private BigDecimal calculateRealDiscountRate(BindingProjectInputData data) {
+        return ((BigDecimal.valueOf(1).add(data.getNominalDiscountRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING)))
+                .divide((BigDecimal.valueOf(1).add(data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING))),3, RoundingMode.CEILING))
+                .subtract(BigDecimal.valueOf(1));
     }
 }
