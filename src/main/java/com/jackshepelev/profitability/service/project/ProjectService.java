@@ -1,14 +1,17 @@
 package com.jackshepelev.profitability.service.project;
 
 import com.jackshepelev.profitability.binding.BindingProjectInputData;
+import com.jackshepelev.profitability.entity.eem.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.project.DiscountRate;
 import com.jackshepelev.profitability.entity.project.EnergyTariff;
 import com.jackshepelev.profitability.entity.project.Project;
 import com.jackshepelev.profitability.entity.user.User;
 import com.jackshepelev.profitability.exception.ProfitabilityException;
+import com.jackshepelev.profitability.repository.eem.EnergyEfficiencyMeasureRepository;
 import com.jackshepelev.profitability.repository.project.EnergyTariffRepository;
 import com.jackshepelev.profitability.repository.project.ProjectRepository;
 import com.jackshepelev.profitability.service.AbstractService;
+import com.jackshepelev.profitability.service.eem.IndicatorsEEMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -27,15 +30,21 @@ public class ProjectService
         extends AbstractService<Project, ProjectRepository> {
 
     private final EnergyTariffRepository energyTariffRepository;
+    private final IndicatorsEEMService indicatorsEEMService;
+    private final EnergyEfficiencyMeasureRepository energyEfficiencyMeasureRepository;
 
     @Autowired
     public ProjectService(ProjectRepository repository,
                           MessageSource messageSource,
-                          EnergyTariffRepository energyTariffRepository) {
+                          EnergyTariffRepository energyTariffRepository,
+                          IndicatorsEEMService indicatorsEEMService,
+                          EnergyEfficiencyMeasureRepository energyEfficiencyMeasureRepository) {
 
         super(repository, messageSource);
 
         this.energyTariffRepository = energyTariffRepository;
+        this.indicatorsEEMService = indicatorsEEMService;
+        this.energyEfficiencyMeasureRepository = energyEfficiencyMeasureRepository;
     }
 
     public Project save(User user, BindingProjectInputData data) {
@@ -68,6 +77,12 @@ public class ProjectService
         Project project = optionalProject.get();
         setProjectData(project, data);
         repository.save(project);
+
+        List<EnergyEfficiencyMeasure> eems = project.getEems();
+        if (eems.size() > 0) {
+            eems.forEach(eem -> indicatorsEEMService.calculateResultData(eem, project));
+        }
+        energyEfficiencyMeasureRepository.saveAll(eems);
 
         return  project;
     }
