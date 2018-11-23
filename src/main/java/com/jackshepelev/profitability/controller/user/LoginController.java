@@ -71,8 +71,7 @@ public class LoginController {
 
         if (userExists != null) {
             bindingResult
-                    .rejectValue("email", "error.user",
-                            "There is already a user registered with the email provided");
+                    .rejectValue("email", "error.user");
         }
 
         if (bindingResult.hasErrors()) {
