@@ -92,8 +92,7 @@ public class IndicatorsEEMService {
                 initialInvestment
         );
         BigDecimal result = realDiscountRate;
-        BigDecimal roundZero = npv.divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING).abs();
-        while (npv.abs().compareTo(roundZero) > 0 ) {
+        while (npv.abs().compareTo(BigDecimal.valueOf(0)) > 0 ) {
             if (npv.compareTo(BigDecimal.valueOf(0)) > 0) {
                 result = result.add(realDiscountRate.divide(BigDecimal.valueOf(200), 3, RoundingMode.CEILING));
                 npv = calculateNPV(
@@ -102,6 +101,7 @@ public class IndicatorsEEMService {
                         economicLifeTime,
                         initialInvestment
                 );
+                if (npv.compareTo(BigDecimal.valueOf(0)) < 0) {break;}
             } else {
                 result = result.subtract(realDiscountRate.divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING));
                 npv = calculateNPV(
@@ -110,6 +110,7 @@ public class IndicatorsEEMService {
                         economicLifeTime,
                         initialInvestment
                 );
+                if (npv.compareTo(BigDecimal.valueOf(0)) > 0) {break;}
             }
         }
         return result.multiply(BigDecimal.valueOf(100));
