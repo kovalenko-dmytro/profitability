@@ -39,9 +39,9 @@
                         <form role="form" method="POST" th:action="@{/projects}" th:object="${data}">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Project title</legend>
                                 <div class="form-group">
-                                    <label for="title">Project title</label>
-                                    <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required placeholder="Project name" />
+                                    <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required placeholder="Project title" />
                                     <p class="text-danger" th:each="error: ${#fields.errors('title')}"
                                        th:text="${error}">Validation error
                                     </p>

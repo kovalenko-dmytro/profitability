@@ -40,17 +40,17 @@
                         <form role="form" method="POST" th:action="@{'/projects/' + ${project.id} + '/eems'}" th:object="${data}">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Measure name</legend>
                                 <div class="form-group">
-                                    <label for="name">EEM name</label>
-                                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}" required/>
+                                    <input type="text" class="form-control" id="name" name="name" th:field="*{name}" placeholder="measure name" required/>
                                     <p class="text-danger" th:each="error: ${#fields.errors('name')}"
                                        th:text="${error}">Validation error
                                     </p>
                                 </div>
                             </fieldset>
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Initial investment, USD</legend>
                                 <div class="form-group">
-                                    <label for="initialInvestment">Initial investment, USD</label>
                                     <input type="text" class="form-control" id="initialInvestment" name="initialInvestment" th:field="*{initialInvestment}" required placeholder="0.000"/>
                                     <p class="text-danger" th:each="error: ${#fields.errors('initialInvestment')}"
                                        th:text="${error}">Validation error
@@ -77,8 +77,8 @@
                                 <p>*Notice: You may fill one or more fields</p>
                             </fieldset>
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Annual Operation & Maintain Costs, USD</legend>
                                 <div class="form-group">
-                                    <label for="annualOMCosts">Annual Operation & Maintain Costs, USD</label>
                                     <input type="text" class="form-control" id="annualOMCosts" name="annualOMCosts" th:field="*{annualOMCosts}" required placeholder="0.000"/>
                                     <p class="text-danger" th:each="error: ${#fields.errors('annualOMCosts')}"
                                        th:text="${error}">Validation error
@@ -86,8 +86,8 @@
                                 </div>
                             </fieldset>
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Economic Lifetime, years</legend>
                                 <div class="form-group">
-                                    <label for="economicLifeTime">Economic Lifetime, years</label>
                                     <input type="number" class="form-control" id="economicLifeTime" name="economicLifeTime" th:field="*{economicLifeTime}" required placeholder="0"/>
                                     <p class="text-danger" th:each="error: ${#fields.errors('economicLifeTime')}"
                                        th:text="${error}">Validation error

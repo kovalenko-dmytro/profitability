@@ -41,8 +41,8 @@
                             <input type="hidden" name="_method" value="PUT">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Project title</legend>
                                 <div class="form-group">
-                                    <label for="title">Project title</label>
                                     <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required  />
                                     <p class="text-danger" th:each="error: ${#fields.errors('title')}"
                                        th:text="${error}">Validation error
