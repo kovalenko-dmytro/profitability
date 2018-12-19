@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class IndicatorsEEMService {
 
-    public void setInputData(EnergyEfficiencyMeasure measure, BindingEEMInputData data) {
+    public void applyInputData(EnergyEfficiencyMeasure measure, BindingEEMInputData data) {
         measure.setName(data.getName());
         measure.getInputEEMData().setAnnualOMCosts(data.getAnnualOMCosts());
         measure.getInputEEMData().setEconomicLifeTime(data.getEconomicLifeTime());

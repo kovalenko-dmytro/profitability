@@ -1,6 +1,7 @@
 package com.jackshepelev.profitability.service.measure;
 
 import com.jackshepelev.profitability.binding.BindingEEMInputData;
+import com.jackshepelev.profitability.binding.ValidList;
 import com.jackshepelev.profitability.entity.measure.EnergyEfficiency;
 import com.jackshepelev.profitability.entity.measure.EnergyEfficiencyMeasure;
 import com.jackshepelev.profitability.entity.measure.InputEEMData;
@@ -47,11 +48,7 @@ public class EnergyEfficiencyMeasureService
                                         BindingEEMInputData data,
                                         Locale locale) throws ProfitabilityException {
 
-        if (data.getEnergyEfficiencies().stream().allMatch(energyEfficiency -> energyEfficiency.getValue().compareTo(BigDecimal.valueOf(0)) == 0)) {
-            throw new ProfitabilityException(
-                    messageSource.getMessage("error.ee-must-exist", null, locale)
-            );
-        }
+        validateEnergyEfficiencyValues(data.getEnergyEfficiencies(), locale);
 
         Project project = projectService.findById(projectID, locale);
 
@@ -60,21 +57,21 @@ public class EnergyEfficiencyMeasureService
                     messageSource.getMessage("error.project-not-exist", null, locale)
             );
         }
+
         EnergyEfficiencyMeasure measure = new EnergyEfficiencyMeasure();
         measure.setInputEEMData(new InputEEMData());
 
-        indicatorsEEMService.setInputData(measure, data);
+        indicatorsEEMService.applyInputData(measure, data);
 
         List<EnergyEfficiency> energyEfficiencies = data.getEnergyEfficiencies();
         energyEfficiencyRepository.saveAll(energyEfficiencies);
+
         energyEfficiencies.forEach(energyEfficiency -> energyEfficiency.setMeasure(measure));
         measure.getInputEEMData().setEnergyEfficiencies(energyEfficiencies);
-
         measure.setResultEEMData(new ResultEEMData());
-
         indicatorsEEMService.calculateResultData(measure, project);
-
         measure.setProject(project);
+
         return repository.save(measure);
     }
 
@@ -82,47 +79,55 @@ public class EnergyEfficiencyMeasureService
                                           BindingEEMInputData data,
                                           Locale locale) throws ProfitabilityException {
 
-        if (data.getEnergyEfficiencies().stream().allMatch(energyEfficiency -> energyEfficiency.getValue().compareTo(BigDecimal.valueOf(0)) == 0)) {
+        validateEnergyEfficiencyValues(data.getEnergyEfficiencies(), locale);
+
+        Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
+        if (!optionalMeasure.isPresent()) {
+            throw new ProfitabilityException(
+                    messageSource.getMessage("error.ee-not-exist", null, locale)
+            );
+        }
+
+        EnergyEfficiencyMeasure measure = optionalMeasure.get();
+        Project project = projectService.findById(measure.getProject().getId(), locale);
+        indicatorsEEMService.applyInputData(measure, data);
+        updateEnergyEfficiencyValues(measure, data);
+        indicatorsEEMService.calculateResultData(measure, project);
+
+        return repository.save(measure);
+    }
+
+    private void validateEnergyEfficiencyValues(ValidList<EnergyEfficiency> energyEfficiencies,
+                                                Locale locale) throws ProfitabilityException {
+
+        boolean valuesNotExist =
+                energyEfficiencies
+                        .stream()
+                        .allMatch(energyEfficiency ->
+                                energyEfficiency.getValue().compareTo(BigDecimal.valueOf(0)) == 0);
+        if (valuesNotExist) {
             throw new ProfitabilityException(
                     messageSource.getMessage("error.ee-must-exist", null, locale)
             );
         }
+    }
 
-        Optional<EnergyEfficiencyMeasure> optionalMeasure = repository.findById(eemID);
+    private void updateEnergyEfficiencyValues(EnergyEfficiencyMeasure measure,
+                                              BindingEEMInputData data) {
 
-        if (optionalMeasure.isPresent()){
-            EnergyEfficiencyMeasure measure = optionalMeasure.get();
-            Project project = projectService.findById(measure.getProject().getId(), locale);
+        List<EnergyEfficiency> storedEnergyEfficiencies = measure.getInputEEMData().getEnergyEfficiencies();
+        ValidList<EnergyEfficiency> dataEnergyEfficiencies = data.getEnergyEfficiencies();
 
-            if (project == null){
-                throw new ProfitabilityException(
-                        messageSource.getMessage("error.project-not-exist", null, locale)
-                );
-            }
-
-            indicatorsEEMService.setInputData(measure, data);
-
-            measure.getInputEEMData().getEnergyEfficiencies()
-                    .forEach(
-                            energyEfficiency -> energyEfficiency
-                                    .setValue(
-                                            data.getEnergyEfficiencies()
-                                                    .stream()
-                                                    .filter(
-                                                            ee -> ee.getEnergyType().getId() == energyEfficiency.getEnergyType().getId()
-                                                    ).findFirst()
-                                                    .get()
-                                                    .getValue()
-                                    )
-                    );
-
-            indicatorsEEMService.calculateResultData(measure, project);
-
-            return repository.save(measure);
-        } else {
-            throw new ProfitabilityException(
-                    messageSource.getMessage("error.project-not-exist", null, locale)
-            );
-        }
+        storedEnergyEfficiencies.forEach(energyEfficiency ->
+                energyEfficiency.setValue(
+                        dataEnergyEfficiencies
+                                .stream()
+                                .filter(ee ->
+                                        ee.getEnergyType().getId() == energyEfficiency.getEnergyType().getId()
+                                ).findFirst()
+                                .get()
+                                .getValue()
+                )
+        );
     }
 }
