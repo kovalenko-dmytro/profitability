@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,11 +45,13 @@ public class ProjectController {
     }
 
     @RequestMapping(value="/projects", method = RequestMethod.GET)
-    public ModelAndView find() {
+    public ModelAndView find(Principal principal) {
 
         ModelAndView modelAndView = new ModelAndView();
+        String email = principal.getName();
+        User user = userService.findByEmail(email);
 
-        modelAndView.addObject("projects", projectService.findAll());
+        modelAndView.addObject("projects", projectService.findAll(user));
         modelAndView.setViewName("/pages/project/projects");
 
         return modelAndView;

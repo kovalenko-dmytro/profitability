@@ -116,4 +116,8 @@ public class ProjectService
                 .divide((BigDecimal.valueOf(1).add(data.getInflationRate().divide(BigDecimal.valueOf(100), 3, RoundingMode.CEILING))),3, RoundingMode.CEILING))
                 .subtract(BigDecimal.valueOf(1));
     }
+
+    public List<Project> findAll(User user) {
+        return repository.findByUserId(user.getId());
+    }
 }
